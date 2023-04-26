@@ -1,5 +1,5 @@
-// // Get the element with ID "basic-example"
-// const basicExample = document.getElementById('basic-example');
+// // Get the element with ID "flow-visualize"
+// const basicExample = document.getElementById('flow-visualize');
 
 // // Get the current scale factor of the element
 // let currentScaleFactor = 1;
@@ -20,7 +20,7 @@
 //   basicExample.classList.remove('zoom-in');
 // }
 
-// const chart = document.getElementById('basic-example');
+// const chart = document.getElementById('flow-visualize');
 // const panzoomInctance = panzoom(chart, {
 //   zoomSpeed: 0.1, // adjust as needed
 //   maxZoom: 2, // adjust as needed

@@ -23,15 +23,15 @@
     color: #000;
     background-color: #f9f9f9;
 }
-#basic-example {
+#flow-visualize {
     transition: transform 0.3s ease-in-out; /* Adds a smooth transition effect */
 }
 
-#basic-example.zoom-in {
+#flow-visualize.zoom-in {
     transform: scale(var(--scale-factor, 1.5));
 }
 
-#basic-example.zoom-out {
+#flow-visualize.zoom-out {
     transform: scale(var(--scale-factor, 0.5));
 }
 .popup {

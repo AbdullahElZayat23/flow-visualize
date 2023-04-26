@@ -65,7 +65,7 @@ function renderGraph() {
 
     let chart_config = {
         chart: {
-            container: "#basic-example",
+            container: "#flow-visualize",
 
             connectors: {
                 type: 'bCurve',
