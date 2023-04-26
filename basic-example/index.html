@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <script src="topological-sort.js"></script>
+    <script src="helpers.js"></script>
+    <script src="../flow.js"></script>
+    <script defer src="import-exort.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.5.3/jspdf.debug.js"
+        integrity="sha384-NaWTHo/8YCBYJ59830LTz/P4aQZK1sS0SneOgAvhsIl3zBu8r9RevNg5lHCHAuQ/"
+        crossorigin="anonymous"></script>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <script src="https://unpkg.com/string-similarity/umd/string-similarity.min.js"></script> 
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />    
+    
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.0/themes/base/jquery-ui.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.13.0/jquery-ui.min.js"></script>
+    
+    <!-- <script defer src="../vendor/panzoom.min.js"></script> -->
+    <meta name="viewport" content="width=device-width">
+    <title> Flow Visualize </title>
+    <link rel="stylesheet" href="../Treant.css">
+    <link rel="stylesheet" href="flow-tree.css">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="fstdropdown.min.css">
+    <!-- <script src="../vendor/jquery.min.js"></script> -->
+    <style>
+        #urlInput {
+            padding: 5px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        .autocomplete-items {
+            position: absolute;
+            border: 1px solid #ccc;
+            border-top: none;
+            z-index: 99;
+            top: 100%;
+            left: 0;
+            right: 0;
+        }
+
+        .autocomplete-item {
+            padding: 5px;
+            cursor: pointer;
+            background-color: #fff;
+            border-bottom: 1px solid #ccc;
+        }
+
+        .autocomplete-item:hover {
+            background-color: #e9e9e9;
+        }
+
+        .autocomplete-item.active {
+            background-color: #007bff;
+            color: #fff;
+        }
+
+        .loader {
+            border: 16px solid #f3f3f3;
+            border-top: 16px solid #3498db;
+            border-radius: 50%;
+            width: 120px;
+            height: 120px;
+            animation: spin 2s linear infinite;
+            margin: -60px 0 0 -60px;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            z-index: 99999999999;
+            display: none;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .disabled-button {
+            opacity: 0.6;
+            pointer-events: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="chart" id="basic-example"></div>
+    <!-- <div class="zoom-controls">
+        <i class="zoom-in-icon" onclick="zoomIn()">+</i>
+        <i class="zoom-out-icon" onclick="zoomOut()">-</i>
+    </div> -->
+    <script src="../vendor/raphael.js"></script>
+    <script src="../Treant.js"></script>
+    <script src="flow-tree.js"></script>
+
+    <div style="position: fixed; top: 0; left: 0; z-index: 99999999;background-color: wheat;">
+        <h1 style="margin-top: 0; font-size: 24px; font-weight: bold;">Flow Search By Name</h1>
+        <p style="font-size: 16px;">Enter Search Name:</p>
+        <input placeholder="Limited To 15 Matches" type="text" onkeydown="((_event) => {
+            checkEnterKey(_event);
+          })(event);" id="searchInput"
+            style="padding: 5px; font-size: 16px; border: 1px solid #ccc; border-radius: 4px; position: relative;">
+        <ul id="suggestionList" style="margin-left: 10px;"></ul>
+
+        <p style="font-size: 16px;">Enter Search Instance:</p>
+        <input type="text" id="urlInput" autocomplete="off">
+        <div id="autocompleteContainer" class="autocomplete-items"></div>
+        <button onclick="searchProcedures()"
+            style="padding: 5px 10px; font-size: 16px; background-color: #4CAF50; color: #fff; border: none; border-radius: 4px; cursor: pointer;">Search</button>
+
+        <button onclick="showPopup()"
+            style="padding: 5px 10px; font-size: 16px; background-color: #4CAF50; color: #fff; border: none; border-radius: 4px; cursor: pointer;">Filters</button>
+
+        <p style="font-size: 16px;">Select from the list to load:</p>
+        <select id="resultsDropdown" onchange="getProcedure()"
+            style="padding: 5px; font-size: 16px; border: 1px solid #ccc; border-radius: 4px;">
+            <option selected disabled>Select Flow From Dropdown</option>
+        </select>
+        <!-- Import -->
+        <label for="importFile"
+            style="padding: 5px 10px; font-size: 16px; background-color: #4CAF50; color: #fff; border: none; border-radius: 4px; cursor: pointer;">Import
+            (.json, .txt)</label>
+        <input type="file" accept=".json, .txt" id="importFile" style="display: none;">
+        <!-- Import -->
+
+        <!-- Export -->
+        <label for="ExportFile"
+            style="padding: 5px 10px; font-size: 16px; background-color: #4CAF50; color: #fff; border: none; border-radius: 4px; cursor: pointer;">Export</label>
+        <input type="button" onclick="exportFlow()" id="ExportFile" style="display: none;">
+        <!-- Export -->
+    </div>
+    <div id="loader" class="loader"></div>
+    <script defer src="auto-complete.js"></script>
+    <script defer src="zoom.js"></script>
+    <div style="text-align:center; margin-top: 30px; font-size: 12px;">
+        <p>Created by Abdullah El-Zayat 2023</p>
+        <p>&copy; All rights reserved</p>
+    </div>
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.16.8/xlsx.full.min.js"></script>
+    <!-- Pop up -->
+    <div class="popup" id="popup">
+        <div class="popup-header">
+            <h2>Select A Filter:</h2>
+            <button class="popup-close" onclick="closePopup()">&times;</button>
+        </div>
+        <button id="allStepsWithErrorsButton" onclick="optionSelected('4')">All Steps That Contains Errors ( <span
+                id="allStepsWithErrors"></span> ) <i class="fa-solid fa-file-arrow-down"></i></button>
+        <button id="stepsWithErrorsButton" style="display: none;" onclick="optionSelected('1')">Steps That Contains Errors <i>"Have A
+                Caller"</i> ( <span id="stepsWithErrors"></span> ) <i class="fa-solid fa-file-arrow-down"></i></button>
+        <button id="stepsWithoutCallerButton" onclick="optionSelected('2')">Steps Without Caller "Parent / Direct Steps"
+            ( <span id="stepsWithoutCaller"></span> ) <i class="fa-solid fa-file-arrow-down"></i></button>
+        <button id="duplicatedStepsButton" onclick="optionSelected('3')">Steps With Duplicated Names ( <span
+                id="duplicatedSteps"></span> ) <i class="fa-solid fa-file-arrow-down"></i></button>
+        <button id="deletStepsWithoutCallerButton" class="button-delete" onclick="deleteStepsWithoutCaller()">Delete Steps Without
+            Caller <i class="fa-solid fa-trash"></i> =&gt; <i class="fa-solid fa-arrows-spin"></i></button>
+        <button id="deleteDuplicatedStepsButton" class="button-delete" onclick="deleteDuplicatedSteps()">Delete Steps With Duplicated
+            Names <i class="fa-solid fa-trash"></i></button>
+
+        <button id="" onclick="optionSelected('5')">More</button>
+
+    </div>
+
+    <!-- Modal -->
+    <div class="popup" style="min-width: 40vw; min-height: 60vh; z-index: 100000000;" id="moreModal">
+        <div class="popup-header">
+            <h2>Select An Option:</h2>
+            <button class="popup-close" onclick="closeModal()">&times;</button>
+        </div>
+        <div class="popup-body">
+            <label for="step-number">Step Index:</label>
+            <input type="number" id="step-number" name="step-number">
+            <br>            
+            <button onclick="searchStep()" style="margin-top: 1vh;">Search</button>
+            <br>
+            <label for="start-step"> Select Start Step</label>
+            <p>
+                <select name="start-step" class='fstdropdown-select' id="steps_dropdown">
+                    <option value="">Select New Parent Step</option>                    
+                </select>
+            </p>
+            <br>
+            <button onclick="extractFlow()">Extract Flow</button>
+        </div>
+    </div>
+    <!-- Modal -->
+
+
+    <script defer src="filters.js"></script>
+    <script defer src="cruds.js"></script>
+    <script defer src="suggestion.js"></script>
+    <script defer src="../vendor/fstdropdown.min.js"></script>
+</body>
+
+</html>
