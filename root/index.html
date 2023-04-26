@@ -3,10 +3,10 @@
 
 <head>
     <meta charset="utf-8">
-    <script src="topological-sort.js"></script>
-    <script src="helpers.js"></script>
-    <script src="../flow.js"></script>
-    <script defer src="import-exort.js"></script>
+    <script src="./flow-visualize/topological-sort.js"></script>
+    <script src="./flow-visualize/helpers.js"></script>
+    <!-- <script src="../flow.js"></script> -->
+    <script defer src="./flow-visualize/import-exort.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.5.3/jspdf.debug.js"
         integrity="sha384-NaWTHo/8YCBYJ59830LTz/P4aQZK1sS0SneOgAvhsIl3zBu8r9RevNg5lHCHAuQ/"
         crossorigin="anonymous"></script>
@@ -21,10 +21,10 @@
     <!-- <script defer src="../vendor/panzoom.min.js"></script> -->
     <meta name="viewport" content="width=device-width">
     <title> Flow Visualize </title>
-    <link rel="stylesheet" href="../Treant.css">
-    <link rel="stylesheet" href="flow-tree.css">
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="fstdropdown.min.css">
+    <link rel="stylesheet" href="../root/Treant.js">
+    <link rel="stylesheet" href="flow-visualize/flow-tree.css">
+    <link rel="stylesheet" href="flow-visualize/style.css">
+    <link rel="stylesheet" href="flow-visualize/fstdropdown.min.css">
     <!-- <script src="../vendor/jquery.min.js"></script> -->
     <style>
         #urlInput {
@@ -98,9 +98,9 @@
         <i class="zoom-in-icon" onclick="zoomIn()">+</i>
         <i class="zoom-out-icon" onclick="zoomOut()">-</i>
     </div> -->
-    <script src="../vendor/raphael.js"></script>
-    <script src="../Treant.js"></script>
-    <script src="flow-tree.js"></script>
+    <script src="../root/vendor/raphael.js"></script>
+    <script src="Treant.js"></script>
+    <script src="flow-visualize/flow-tree.js"></script>
 
     <div style="position: fixed; top: 0; left: 0; z-index: 99999999;background-color: wheat;">
         <h1 style="margin-top: 0; font-size: 24px; font-weight: bold;">Flow Search By Name</h1>
@@ -139,8 +139,8 @@
         <!-- Export -->
     </div>
     <div id="loader" class="loader"></div>
-    <script defer src="auto-complete.js"></script>
-    <script defer src="zoom.js"></script>
+    <script defer src="./flow-visualize/auto-complete.js"></script>
+    <script defer src="./flow-visualize/zoom.js"></script>
     <div style="text-align:center; margin-top: 30px; font-size: 12px;">
         <p>Created by Abdullah El-Zayat 2023</p>
         <p>&copy; All rights reserved</p>
@@ -195,10 +195,10 @@
     <!-- Modal -->
 
 
-    <script defer src="filters.js"></script>
-    <script defer src="cruds.js"></script>
-    <script defer src="suggestion.js"></script>
-    <script defer src="../vendor/fstdropdown.min.js"></script>
+    <script defer src="flow-visualize/filters.js"></script>
+    <script defer src="flow-visualize/cruds.js"></script>
+    <script defer src="flow-visualize/suggestion.js"></script>
+    <script defer src="./vendor/fstdropdown.min.js"></script>
 </body>
 
 </html>
