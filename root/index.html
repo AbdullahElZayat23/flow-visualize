@@ -243,6 +243,39 @@
             </p>
             <br>
             <button onclick="extractFlow()">Extract Flow</button>
+
+            <br>
+            <label for="type"> Select Step Type</label>
+            <p>
+                <select name="type" class='fstdropdown-select' id="steps_type">
+                    <option disabled selected value="">Select Step Type</option>
+                    <option value="message">Message</option>
+                    <option value="action">Action</option>
+                    <option value="failover">Fail Over</option>
+                    <option value="end">End</option>
+                    <option value="time">Time</option>
+                    <option value="break">Break</option>
+                    <option value="reminder">Reminder</option>
+                    <option value="template">Template</option>
+                    <option value="none">No Type</option>
+                </select>
+            </p>
+            <br>
+            <button onclick="extractSteps()">Extract Steps</button>
+            <br>
+            <button id="">More</button>
+        </div>
+    </div>
+    <!-- Modal -->
+
+    <!-- Modal -->
+    <div class="popup" style="min-width: 40vw; min-height: 60vh; z-index: 100000000;" id="moreModal_2">
+        <div class="popup-header">
+            <h2>Select An Option:</h2>
+            <button class="popup-close" onclick="closeModal_2()">&times;</button>
+        </div>
+        <div class="popup-body">
+            
         </div>
     </div>
     <!-- Modal -->

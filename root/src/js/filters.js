@@ -56,7 +56,34 @@ function optionSelected(_option) {
   }
   closePopup();
 }
-
+function extractSteps() {
+  let steps = [];
+  let type = document.getElementById('steps_type').value;
+  if (!type)
+    return;
+  switch (type) {
+    case 'template':
+      steps = globalThis.selectedFlow.steps.filter(_step => _step.template);
+      break;
+    case 'none':
+      steps = globalThis.selectedFlow.steps.filter(_step => !_step.type);
+      break;
+    default:
+      steps = globalThis.selectedFlow.steps.filter(_step => _step.type == type);
+      break;
+  }
+  closeModal();
+  if (!steps.length) {    
+    swal({
+      title: "No Steps Found With The Choosen Criteria",
+      text: "There are no steps With The Choosen Criteria",
+      icon: "info",
+    });
+    return;
+  }
+  //Create report  
+  exportFlow({steps, name: globalThis.selectedFlow.name});
+}
 function showModal() {
   let moreModal = document.getElementById('moreModal');
   moreModal.classList.add("active");

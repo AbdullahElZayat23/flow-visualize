@@ -75,7 +75,7 @@ function exportFlow(data) {
       const url = URL.createObjectURL(blob);
       const link = document.createElement("a");
       link.href = url;
-      link.download = `${data.name}-extracted | ${new Date().toISOString()}.json` || 'flow.json';
+      link.download = `${flowData.name}-extracted | ${new Date().toISOString()}.json` || 'flow.json';
 
       // Add the link element to the DOM and click it to download the data
       document.body.appendChild(link);
