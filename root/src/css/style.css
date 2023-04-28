@@ -105,6 +105,11 @@
     cursor: not-allowed !important;
   }
 
+  .popup-body {
+    max-height: 60vh;
+    overflow: auto;
+  }
+
   table {
     border-collapse: collapse;
     width: 100%;
