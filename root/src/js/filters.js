@@ -271,7 +271,7 @@ function addStep() {
       });
     }
   });
-
+  //TODO remove duplication in name 
   if (stepsErrors.length) {
     showReport(stepsErrors.map(_step => ({
       Name: _step.name,
