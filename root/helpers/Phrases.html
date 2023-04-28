@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Phrases</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        font-size: 16px;
+        line-height: 1.5;
+        color: #333;
+        background-color: #f5f5f5;
+        margin: 0;
+        padding: 20px;
+      }
+      
+      h1 {
+        font-size: 32px;
+        font-weight: bold;
+        margin: 0 0 20px 0;
+      }
+
+      label {
+        display: block;
+        font-size: 20px;
+        margin: 20px 0 10px 0;
+      }
+
+      input[type="text"] {
+        font-size: 20px;
+        padding: 10px;
+        border: 2px solid #ccc;
+        border-radius: 5px;
+        width: 100%;
+        max-width: 500px;
+        box-sizing: border-box;
+      }
+
+      p {
+        font-size: 20px;
+        margin: 20px 0;
+        white-space: pre-line;
+      }
+
+      button {
+        font-size: 20px;
+        padding: 10px;
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s ease-in-out;
+      }
+
+      button:hover {
+        background-color: #3e8e41;
+      }
+
+      .checkmark {
+        display: inline-block;
+        vertical-align: middle;
+        width: 20px;
+        height: 20px;
+        margin-left: 5px;
+        background-image: url('https://cdnjs.cloudflare.com/ajax/libs/ionicons/5.1.2/svg/checkmark.svg');
+        background-repeat: no-repeat;
+        background-position: center;
+        background-size: contain;
+        opacity: 0;
+        transition: opacity 0.5s ease-in-out;
+      }
+
+      .checkmark.show {
+        opacity: 1;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Phrases</h1>
+    <label for="inputText">Enter phrase text</label>
+    <input type="text" id="inputText" placeholder="Enter phrase text to manipulate" oninput="manipulateText()">
+    <br>
+    <strong>length including spaces: <span id="length"></span></strong>
+    <p id="manipulatedText"></p>
+    <button id="copyButton" onclick="copyText()">Copy to Clipboard</button>
+    <span class="checkmark" id="checkmark"></span>
+
+    <script>
+      function manipulateText() {
+        const inputText = document.getElementById("inputText").value;
+        const analysisSize = 50; // You can adjust this as needed
+        const manipulatedText = inputText.substring(0, analysisSize).toLowerCase()
+          .replace(/(\r\n|\n|\r)/gm, "")
+          .replace('.', '')
+          .replace(',', '')
+          .replace('?', '')
+          .replace('!', '').replace('ال', '').replace('ة', 'ه').trim();
+        document.getElementById("manipulatedText").textContent = manipulatedText;
+        document.getElementById("length").textContent = inputText.length; 
+      }
+
+      function copyText() {
+        const manipulatedText = document.getElementById("manipulatedText");
+        const textToCopy = manipulatedText.innerText;
+        const tempTextArea = document.createElement("textarea");
+        tempTextArea.value = textToCopy;
+        document.body.appendChild(tempTextArea);
+        tempTextArea.select();
+        document.execCommand("copy");
+        document.body.removeChild(tempTextArea);
+        showCheckmark();
+      }
+
+      function showCheckmark() {
+        const checkmark = document.getElementById("checkmark");
+        checkmark.classList.add("show");
+        document.getElementById("copyButton").textContent = "Copied !";
+        setTimeout(() => {
+          checkmark.classList.remove("show");
+          document.getElementById("copyButton").textContent = "Copy to Clipboard";
+        }, 3000);
+      }
+      window.addEventListener("keydown", (event) => {
+            if (event.ctrlKey && event.key === "c") {
+                event.preventDefault();
+                copyText();
+            }
+        });
+    </script>
+  </body>
+</html>

@@ -12,13 +12,15 @@
         integrity="sha384-NaWTHo/8YCBYJ59830LTz/P4aQZK1sS0SneOgAvhsIl3zBu8r9RevNg5lHCHAuQ/"
         crossorigin="anonymous"></script>
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <script src="https://unpkg.com/string-similarity/umd/string-similarity.min.js"></script> 
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />    
-    
+    <script src="https://unpkg.com/string-similarity/umd/string-similarity.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+        integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.0/themes/base/jquery-ui.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://code.jquery.com/ui/1.13.0/jquery-ui.min.js"></script>
-    
+
     <!-- <script defer src="../vendor/panzoom.min.js"></script> -->
     <meta name="viewport" content="width=device-width">
     <title> Flow Visualize </title>
@@ -90,6 +92,29 @@
             opacity: 0.6;
             pointer-events: none;
         }
+        #options {
+                position: absolute;
+                top: 100%;
+                right: 0;
+                z-index: 1;
+                background-color: #f9f9f9;
+                min-width: 160px;
+                border: 1px solid #ccc;
+                border-radius: 4px;
+                box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+                display: none;
+            }
+        
+            #options a {
+                color: #000;
+                padding: 8px 12px;
+                text-decoration: none;
+                display: block;
+            }
+        
+            #options a:hover {
+                background-color: #f2f2f2;
+            }
     </style>
 </head>
 
@@ -120,6 +145,30 @@
 
         <button onclick="showPopup()"
             style="padding: 5px 10px; font-size: 16px; background-color: #4CAF50; color: #fff; border: none; border-radius: 4px; cursor: pointer;">Filters</button>
+
+            <button 
+            style="padding: 5px 10px; font-size: 16px; background-color: #4CAF50; color: #fff; border: none; border-radius: 4px; cursor: pointer;"
+            onmouseover="showOptions()"
+            onmouseout="hideOptions()"
+        >
+            Helpers
+        </button>
+        
+        <div onmouseover="showOptions()" onmouseout="hideOptions()" id="options" style="position: absolute; top: 30px; right: 0; z-index: 1; background-color: #f9f9f9; min-width: 160px; border: 1px solid #ccc; border-radius: 4px; box-shadow: 0 2px 5px rgba(0,0,0,0.2); display: none;">
+            <a href="./helpers/Entities.html" target="_blank">Entities</a>
+            <a href="./helpers/Phrases.html" target="_blank">Phrases</a>
+            <a href="./helpers/Charachters.length.html" target="_blank">Charachters length</a>
+        </div>
+        
+        <script>
+            function showOptions() {
+                document.getElementById("options").style.display = "block";
+            }
+        
+            function hideOptions() {
+                document.getElementById("options").style.display = "none";
+            }
+        </script>       
 
         <p style="font-size: 16px;">Select from the list to load:</p>
         <select id="resultsDropdown" onchange="getProcedure()"
@@ -156,15 +205,18 @@
         </div>
         <button id="allStepsWithErrorsButton" onclick="optionSelected('4')">All Steps That Contains Errors ( <span
                 id="allStepsWithErrors"></span> ) <i class="fa-solid fa-file-arrow-down"></i></button>
-        <button id="stepsWithErrorsButton" style="display: none;" onclick="optionSelected('1')">Steps That Contains Errors <i>"Have A
+        <button id="stepsWithErrorsButton" style="display: none;" onclick="optionSelected('1')">Steps That Contains
+            Errors <i>"Have A
                 Caller"</i> ( <span id="stepsWithErrors"></span> ) <i class="fa-solid fa-file-arrow-down"></i></button>
         <button id="stepsWithoutCallerButton" onclick="optionSelected('2')">Steps Without Caller "Parent / Direct Steps"
             ( <span id="stepsWithoutCaller"></span> ) <i class="fa-solid fa-file-arrow-down"></i></button>
         <button id="duplicatedStepsButton" onclick="optionSelected('3')">Steps With Duplicated Names ( <span
                 id="duplicatedSteps"></span> ) <i class="fa-solid fa-file-arrow-down"></i></button>
-        <button id="deletStepsWithoutCallerButton" class="button-delete" onclick="deleteStepsWithoutCaller()">Delete Steps Without
+        <button id="deletStepsWithoutCallerButton" class="button-delete" onclick="deleteStepsWithoutCaller()">Delete
+            Steps Without
             Caller <i class="fa-solid fa-trash"></i> =&gt; <i class="fa-solid fa-arrows-spin"></i></button>
-        <button id="deleteDuplicatedStepsButton" class="button-delete" onclick="deleteDuplicatedSteps()">Delete Steps With Duplicated
+        <button id="deleteDuplicatedStepsButton" class="button-delete" onclick="deleteDuplicatedSteps()">Delete Steps
+            With Duplicated
             Names <i class="fa-solid fa-trash"></i></button>
 
         <button id="" onclick="optionSelected('5')">More</button>
@@ -180,13 +232,13 @@
         <div class="popup-body">
             <label for="step-number">Step Index:</label>
             <input type="number" id="step-number" name="step-number">
-            <br>            
+            <br>
             <button onclick="searchStep()" style="margin-top: 1vh;">Search</button>
             <br>
             <label for="start-step"> Select Start Step</label>
             <p>
                 <select name="start-step" class='fstdropdown-select' id="steps_dropdown">
-                    <option value="">Select New Parent Step</option>                    
+                    <option value="">Select New Parent Step</option>
                 </select>
             </p>
             <br>
