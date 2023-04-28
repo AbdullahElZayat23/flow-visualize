@@ -26,5 +26,10 @@
   "bugs": {
     "url": "https://github.com/fperucic/treant-js/issues"
   },
-  "homepage": "https://github.com/fperucic/treant-js#readme"
+  "homepage": "https://github.com/fperucic/treant-js#readme",
+  "dependencies": {
+    "gulp": "^4.0.2",
+    "gulp-rename": "^2.0.0",
+    "gulp-uglify": "^3.0.2"
+  }
 }
