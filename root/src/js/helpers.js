@@ -13,11 +13,7 @@ function getChildren(_step, _steps) {
           caller: `Caller => ${_step.name}`,
           ...deleteUnwanted(prepareKeyValue(_stp)),
         }
-        // connectors: {
-        //   style: fillStyle(checkStpCase(_stp,_step))
-        // },        
       };
-      //TODO check if the name of the action is the same as the same of the step
       let errors = findErrors(_stp);
       if (errors?.length) {
         child.text.errors = 'Errors => ' + errors.join(' , ');
@@ -43,15 +39,15 @@ function getChildren(_step, _steps) {
   return childrens;
 }
 function getChildrenForExtraction(_step, _steps) {
-  let childrens = [];  
+  let childrens = [];
   _steps.forEach((_stp, _index) => {
     if (_stp.name && (_stp.name == _step.next
       || _stp.name == _step.success
       || _stp.name == _step.fail
-      || _stp.name == _step.expiry?.step 
+      || _stp.name == _step.expiry?.step
       || checkExpected(_step.expected, _stp.name)
     )
-    ) {      
+    ) {
       if (!globalThis.flowToExtractVisitedSteps.has(_stp.name)) {
         // Store visited steps to prevent circular reference
         globalThis.flowToExtractVisitedSteps.add(_stp.name);
@@ -379,6 +375,17 @@ function getStepsWithOutCaller(_steps = []) {
     }
   });
   return Array.from(stepsWithOutCallerSET);
+}
+function checkIfAllCallersIsWithOutCaller(_stepsWithOutCallers, _callers) {
+  let allExistInWithOutCaller = true;
+  let names = _callers.map(_step => _step.name);
+  names.forEach(_name => {
+    let exist = _stepsWithOutCallers.find(_step => _step.name == _name);
+    if (!exist) {
+      allExistInWithOutCaller = false;
+    }
+  });
+  return allExistInWithOutCaller;
 }
 function getStepsWithDuplicatedNames(steps) {
   const groups = {};
