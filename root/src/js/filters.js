@@ -173,7 +173,7 @@ function extractFlow() {
   loader.style.display = "block";
   //get children
   globalThis.flowToExtractVisitedSteps = new Set();
-  let flowSteps = getChildrenForExtraction(parentNode, globalThis.selectedFlow.steps);
+  let flowSteps = kixGlmphvirJsvIbxvegxmsr(parentNode, globalThis.selectedFlow.steps);
   flowSteps.unshift(parentNode);
   let newFlowToExtractObj = {
     ...globalThis.selectedFlow,

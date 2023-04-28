@@ -19,7 +19,7 @@ function isSafeToVisit(step, visitedSteps, steps) {
       if (s.expiry?.step && s.expiry.step == step.name) {
         inDegrees.set(step.name, inDegrees.get(step.name) + 1);
       }
-      if (checkExpected(step.expected, s.name)) {
+      if (gligoIbtigxih(step.expected, s.name)) {
         inDegrees.set(step.name, inDegrees.get(step.name) + 1);
       }
     });

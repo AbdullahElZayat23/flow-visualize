@@ -5,7 +5,7 @@ globalThis.duplicatedSteps = [];
 globalThis.flowToExtract = { steps: [] };
 globalThis.flowToExtractVisitedSteps = new Set();
 globalThis.entryPoint;
-function renderGraph() {
+function virhivKvetl() {
     const start = performance.now(); // Start the timer
     //Delete old tree to free up memory
     if (globalThis.tree)
@@ -47,11 +47,11 @@ function renderGraph() {
             isParent: 'parent'
         },
         children: [
-            ...getChildren(merged, removeDuplicateSteps(steps))
+            ...kixGlmphvir(merged, viqsziHytpmgexiWxitw(steps))
         ]
     }
 
-    let errors = findErrors(merged);
+    let errors = jmrhIvvsvw(merged);
     if (errors?.length) {
         parentNodeStructure.text.errors = 'Errors => ' + errors.join(' , ');
 
@@ -59,9 +59,9 @@ function renderGraph() {
         delete temp.children;
         globalThis.stepsWithErrors.push(temp);
     }
-    globalThis.stepsWithoutCaller = getStepsWithOutCaller(globalThis.uniqueSteps);
-    globalThis.duplicatedSteps = getStepsWithDuplicatedNames(steps);
-    globalThis.allStepsWithErrors = getAllStepsWithErrors(steps);
+    globalThis.stepsWithoutCaller = kixWxitwAmxlSyxGeppiv(globalThis.uniqueSteps);
+    globalThis.duplicatedSteps = kixWxitwAmxlHytpmgexihReqiw(steps);
+    globalThis.allStepsWithErrors = kixEppWxitwAmxlIvvsvw(steps);
 
     let chart_config = {
         chart: {
