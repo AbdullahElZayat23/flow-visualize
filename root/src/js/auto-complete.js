@@ -1,8 +1,8 @@
 
 const instances = [
     'https://staging-v2.robodesk.ai',
-    'http://houston.robodesk.ai',
-    'http://lg.robodesk.ai',
+    'https://houston.robodesk.ai',
+    'https://lg.robodesk.ai',
     'https://lg-jordan.robodesk.ai',
     'https://alfa-lab.robodesk.ai',
     'https://alfa-scan.robodesk.ai',
