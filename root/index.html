@@ -92,29 +92,30 @@
             opacity: 0.6;
             pointer-events: none;
         }
+
         #options {
-                position: absolute;
-                top: 100%;
-                right: 0;
-                z-index: 1;
-                background-color: #f9f9f9;
-                min-width: 160px;
-                border: 1px solid #ccc;
-                border-radius: 4px;
-                box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-                display: none;
-            }
-        
-            #options a {
-                color: #000;
-                padding: 8px 12px;
-                text-decoration: none;
-                display: block;
-            }
-        
-            #options a:hover {
-                background-color: #f2f2f2;
-            }
+            position: absolute;
+            top: 100%;
+            right: 0;
+            z-index: 1;
+            background-color: #f9f9f9;
+            min-width: 160px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            display: none;
+        }
+
+        #options a {
+            color: #000;
+            padding: 8px 12px;
+            text-decoration: none;
+            display: block;
+        }
+
+        #options a:hover {
+            background-color: #f2f2f2;
+        }
     </style>
 </head>
 
@@ -146,29 +147,28 @@
         <button onclick="showPopup()"
             style="padding: 5px 10px; font-size: 16px; background-color: #4CAF50; color: #fff; border: none; border-radius: 4px; cursor: pointer;">Filters</button>
 
-            <button 
+        <button
             style="padding: 5px 10px; font-size: 16px; background-color: #4CAF50; color: #fff; border: none; border-radius: 4px; cursor: pointer;"
-            onmouseover="showOptions()"
-            onmouseout="hideOptions()"
-        >
+            onmouseover="showOptions()" onmouseout="hideOptions()">
             Helpers
         </button>
-        
-        <div onmouseover="showOptions()" onmouseout="hideOptions()" id="options" style="position: absolute; top: 30px; right: 0; z-index: 1; background-color: #f9f9f9; min-width: 160px; border: 1px solid #ccc; border-radius: 4px; box-shadow: 0 2px 5px rgba(0,0,0,0.2); display: none;">
+
+        <div onmouseover="showOptions()" onmouseout="hideOptions()" id="options"
+            style="position: absolute; top: 30px; right: 0; z-index: 1; background-color: #f9f9f9; min-width: 160px; border: 1px solid #ccc; border-radius: 4px; box-shadow: 0 2px 5px rgba(0,0,0,0.2); display: none;">
             <a href="./helpers/Entities.html" target="_blank">Entities</a>
             <a href="./helpers/Phrases.html" target="_blank">Phrases</a>
             <a href="./helpers/Charachters.length.html" target="_blank">Charachters length</a>
         </div>
-        
+
         <script>
             function showOptions() {
                 document.getElementById("options").style.display = "block";
             }
-        
+
             function hideOptions() {
                 document.getElementById("options").style.display = "none";
             }
-        </script>       
+        </script>
 
         <p style="font-size: 16px;">Select from the list to load:</p>
         <select id="resultsDropdown" onchange="getProcedure()"
@@ -262,22 +262,20 @@
             </p>
             <br>
             <button onclick="extractSteps()">Extract Steps</button>
-            <br>            
+            <br>
+            <label for="external-source">Merge Steps, Upload External Source (duplicates will be removed).</label>
+            <br>
+            <span style="font-weight: bold; color: red;">Current &lt;----- </span><input
+                style="border: 1px solid black;" type="file" accept=".json, .txt" name="external-source"
+                id="external-source-input">
+            <button onclick="mergeSteps()">Merge Steps</button>
+            <br>
+            <textarea name="" id="step-text-area"></textarea>
+            <button onclick="addStep()">Add Step</button>
         </div>
     </div>
     <!-- Modal -->
 
-    <!-- Modal -->
-    <div class="popup" style="min-width: 40vw; min-height: 60vh; z-index: 100000000;" id="moreModal_2">
-        <div class="popup-header">
-            <h2>Select An Option:</h2>
-            <button class="popup-close" onclick="closeModal_2()">&times;</button>
-        </div>
-        <div class="popup-body">
-            
-        </div>
-    </div>
-    <!-- Modal -->
 
 
     <script defer src="./dist/js/filters.min.js"></script>

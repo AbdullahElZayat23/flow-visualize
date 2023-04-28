@@ -1,6 +1,6 @@
 // Get the import file input element
 const importFileInput = document.getElementById('importFile');
-
+const externalFlow = document.getElementsByName('external-source')[0];
 // Add an event listener to the import file input element
 importFileInput.addEventListener('change', (event) => {
   // Get the selected file from the input element
@@ -40,11 +40,49 @@ importFileInput.addEventListener('change', (event) => {
   reader.readAsText(file);
 });
 
+externalFlow.addEventListener('change', (event) => {
+  // Get the selected file from the input element
+  const file = event.target.files[0];
+
+  // Create a file reader
+  const reader = new FileReader();
+
+  // Add an event listener to the file reader
+  reader.addEventListener('load', (event) => {
+    try {
+      // Parse the JSON data from the file content
+      const jsonData = JSON.parse(event.target.result);
+      if (jsonData?.steps?.length) {
+        // Do something with the imported data
+        // For example, update the flow visualization
+        globalThis.uploadedFileJSOnsData = jsonData;
+      } else {
+        swal({
+          title: "No Data To Read",
+          text: "There is no data to read in the selected file.",
+          icon: "info",
+        });
+      }
+
+    } catch (error) {
+      // Handle errors during the JSON parsing
+      swal('Error', 'Failed to import JSON data. Please make sure the selected file contains valid / pure JSON data.', 'error');
+    }
+    //Clear file selection
+    externalFlow.value = '';
+  });
+  reader.onerror = function () {
+    swal('Error', 'Error While Reading The File', 'error');
+  }
+  // Read the selected file as text
+  reader.readAsText(file);
+});
+
 function updateFlowVisualization(jsonData) {
   try {
     loader.style.display = "block";
     setTimeout(() => {
-      globalThis.selectedFlow = jsonData;     
+      globalThis.selectedFlow = jsonData;
       virhivKvetl();
       loader.style.display = "none";
       swal({
@@ -59,7 +97,7 @@ function updateFlowVisualization(jsonData) {
   }
 }
 
-function exportFlow(data) {
+function exportFlow(data, _options={}) {
   loader.style.display = "block";
   try {
     // Get the flow data
@@ -75,7 +113,7 @@ function exportFlow(data) {
       const url = URL.createObjectURL(blob);
       const link = document.createElement("a");
       link.href = url;
-      link.download = `${flowData.name}-extracted | ${new Date().toISOString()}.json` || 'flow.json';
+      link.download = `${_options?.name || flowData.name}-extracted | ${new Date().toISOString()}.json` || 'flow.json';
 
       // Add the link element to the DOM and click it to download the data
       document.body.appendChild(link);

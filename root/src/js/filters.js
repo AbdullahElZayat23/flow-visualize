@@ -73,7 +73,7 @@ function extractSteps() {
       break;
   }
   closeModal();
-  if (!steps.length) {    
+  if (!steps.length) {
     swal({
       title: "No Steps Found With The Choosen Criteria",
       text: "There are no steps With The Choosen Criteria",
@@ -82,7 +82,7 @@ function extractSteps() {
     return;
   }
   //Create report  
-  exportFlow({steps, name: globalThis.selectedFlow.name});
+  exportFlow({ steps, name: globalThis.selectedFlow.name });
 }
 function showModal() {
   let moreModal = document.getElementById('moreModal');
@@ -162,14 +162,16 @@ function searchStep() {
 }
 function addOptions(steps) {
   const select = document.getElementById("steps_dropdown");
-  const options = steps.map(step => {
+  const options = steps?.map(step => {
     const opt = document.createElement("option");
     opt.text = step.name;
     opt.value = step.name;
     return opt;
   });
-  select.append(...options);
-  updateDropdown();
+  if (options?.length) {
+    select.append(...options);
+    updateDropdown();
+  }
 }
 
 function removeOptions() {
@@ -192,7 +194,7 @@ function extractFlow() {
   if (!parentNode) {
     swal({
       title: "No Step Found With The Entered Name",
-      text: "Make Sure STep Name Is Correct.",
+      text: "Make Sure Step Name Is Correct.",
       icon: "info",
     });
     return;
@@ -207,6 +209,79 @@ function extractFlow() {
     steps: flowSteps
   }
   exportFlow(newFlowToExtractObj);
+}
+function mergeSteps() {
+  closeModal();
+  if (!globalThis.uploadedFileJSOnsData?.steps?.length) {
+    swal({
+      title: "Select Data Source",
+      text: "Select Data Source To Merge From",
+      icon: "info",
+    });
+    return;
+  }
+
+  const selectedSteps = globalThis.selectedFlow.steps;
+  const uploadedSteps = globalThis.uploadedFileJSOnsData.steps;
+
+  // create a Map object to hold the merged steps, using step names as keys
+  const mergedStepsMap = new Map();
+
+  // add selected steps to the mergedStepsMap
+  selectedSteps.forEach(step => {
+    mergedStepsMap.set(step.name, step);
+  });
+
+  // iterate through each uploaded step and add it to the mergedStepsMap,
+  // overwriting any existing step with the same name
+  uploadedSteps.forEach(step => {
+    mergedStepsMap.set(step.name, step);
+  });
+
+  // export the merged steps to the selected flow
+  exportFlow({
+    ...globalThis.selectedFlow,
+    steps: Array.from(mergedStepsMap.values())
+  },
+    {
+      name: `${globalThis.selectedFlow.name}-merged`
+    });
+}
+function addStep() {
+  closeModal();
+  let steps = document.getElementById('step-text-area').value;
+  let parsedSteps;
+  let stepsErrors = [];
+  try {
+    parsedSteps = JSON.parse(steps);
+  } catch (error) {
+    swal('Error', 'Failed to parse JSON data. Please make sure the inserted step/s contains valid / pure JSON data.', 'error');
+    return;
+  }
+  if (!Array.isArray(parsedSteps)) {
+    parsedSteps = [parsedSteps];
+  }
+
+  parsedSteps.forEach((_step, _index) => {
+    let errors = jmrhIvvsvw(_step);
+    if (errors.length) {
+      stepsErrors.push({
+        name: _step.name,
+        errors
+      });
+    }
+  });
+
+  if (stepsErrors.length) {
+    showReport(stepsErrors.map(_step => ({
+      Name: _step.name,
+      Errors: _step.errors.join(', '),
+    })), ['Name', 'Errors'], 'new steps', 'inserted-steps-with-errors');
+  } else {
+    let newSteps = globalThis.selectedFlow.steps.concat(parsedSteps);
+    let jsonData = { ...globalThis.selectedFlow, steps: newSteps };
+    updateFlowVisualization(jsonData);
+  }
 }
 
 
