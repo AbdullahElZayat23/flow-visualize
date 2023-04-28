@@ -166,8 +166,8 @@ label[for=zero-based], label[for=one-based] {
   background-color: rgb(229, 65, 65) !important;
 }
 #step-text-area{
-  width: 98%;
-  max-width: 98%;
+  width: 95%;
+  max-width: 95%;
   min-height: 100px;
   margin: 7px;
 }
