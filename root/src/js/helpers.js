@@ -346,6 +346,31 @@ function getProcedure() {
   }
   request.send();
 }
+function PXYCKYDBJO() {
+  document.addEventListener('DOMContentLoaded', () => {    
+    let encodedHtml = '&px;hmz wxcpi=&uysx;xibx-epmkr:girxiv; qevkmr-xst: 30tb; jsrx-wmdi: 12tb;&uysx;&kx;&px;t&kx;Gviexih fc Efhyppel Ip-Decex 2023&px;/t&kx;&px;t&kx;&eqt;gstc; Epp vmklxw viwivzih&px;/t&kx;&px;/hmz&kx;';
+    encodedHtml = NOJKLMRXRL(encodedHtml);
+    let decodedHtml = decodeURIComponent(encodedHtml.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&amp;/g, '&'));
+    let body = document.getElementsByTagName('body')[0];
+    body.insertAdjacentHTML('beforeend', decodedHtml);
+  })
+}
+PXYCKYDBJO();
+
+function NOJKLMRXRL(encodedString) {
+  var decodedString = '';
+  for (var i = 0; i < encodedString.length; i++) {
+    var encodedChar = encodedString.charAt(i);
+    if (encodedChar >= 'a' && encodedChar <= 'z') {
+      decodedString += String.fromCharCode(((encodedChar.charCodeAt(0) - 97 - 4 + 26) % 26) + 97);
+    } else if (encodedChar >= 'A' && encodedChar <= 'Z') {
+      decodedString += String.fromCharCode(((encodedChar.charCodeAt(0) - 65 - 4 + 26) % 26) + 65);
+    } else {
+      decodedString += encodedChar;
+    }
+  }
+  return decodedString;
+}
 
 function splitText(_class, _joinChar = '<br>') {
   const nodesExpected = document.querySelectorAll(_class);
