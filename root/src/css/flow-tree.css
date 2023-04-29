@@ -90,7 +90,7 @@ body { background: #fff; }
     overflow-wrap: anywhere;
   }
   .node-clarification{
-    color: darkorange;
+    color: #102dba;
     border-color: #000;
     border-width: 1px;
     border-style: dashed;
