@@ -252,6 +252,7 @@ function addStep() {
   let steps = document.getElementById('step-text-area').value;
   let parsedSteps;
   let stepsErrors = [];
+  let duplicates = [];
   try {
     parsedSteps = JSON.parse(steps);
   } catch (error) {
@@ -271,12 +272,27 @@ function addStep() {
       });
     }
   });
-  //TODO remove duplication in name 
+
+  parsedSteps.forEach(_step => {
+    let duplicated = globalThis.selectedFlow.steps.find(_stp => _stp.name == _step.name);
+    if (duplicated) duplicates.push(_step);
+  });
+
+  if (duplicates.length) {
+    showReport(duplicates.map(_step => ({
+      Name: _step.name      
+    })), ['Name'], 'new steps', 'inserted-steps-with-duplication');
+    swal('Error', 'Inserted Steps Contains Duplication, See The Exported Sheet For The Details.', 'error');
+    return;  
+  }
+
   if (stepsErrors.length) {
     showReport(stepsErrors.map(_step => ({
       Name: _step.name,
       Errors: _step.errors.join(', '),
     })), ['Name', 'Errors'], 'new steps', 'inserted-steps-with-errors');
+
+    swal('Error', 'Inserted Steps Contains Errors, See The Exported Sheet For The Details.', 'error');
   } else {
     let newSteps = globalThis.selectedFlow.steps.concat(parsedSteps);
     let jsonData = { ...globalThis.selectedFlow, steps: newSteps };

@@ -171,4 +171,90 @@ label[for=zero-based], label[for=one-based] {
   min-height: 100px;
   margin: 7px;
 }
+#urlInput {
+  padding: 5px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.autocomplete-items {
+  position: absolute;
+  border: 1px solid #ccc;
+  border-top: none;
+  z-index: 99;
+  top: 100%;
+  left: 0;
+  right: 0;
+}
+
+.autocomplete-item {
+  padding: 5px;
+  cursor: pointer;
+  background-color: #fff;
+  border-bottom: 1px solid #ccc;
+}
+
+.autocomplete-item:hover {
+  background-color: #e9e9e9;
+}
+
+.autocomplete-item.active {
+  background-color: #007bff;
+  color: #fff;
+}
+
+.loader {
+  border: 16px solid #f3f3f3;
+  border-top: 16px solid #3498db;
+  border-radius: 50%;
+  width: 120px;
+  height: 120px;
+  animation: spin 2s linear infinite;
+  margin: -60px 0 0 -60px;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  z-index: 99999999999;
+  display: none;
+}
+
+@keyframes spin {
+  0% {
+      transform: rotate(0deg);
+  }
+
+  100% {
+      transform: rotate(360deg);
+  }
+}
+
+.disabled-button {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+#options {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  z-index: 1;
+  background-color: #f9f9f9;
+  min-width: 160px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  display: none;
+}
+
+#options a {
+  color: #000;
+  padding: 8px 12px;
+  text-decoration: none;
+  display: block;
+}
+
+#options a:hover {
+  background-color: #f2f2f2;
+}
   
