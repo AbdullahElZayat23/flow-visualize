@@ -179,8 +179,10 @@ globalThis.searchHistory = [...new Set(globalThis.searchHistory)];
 
 // Add a new search term to the search history array and update the "searchHistory" cookie
 function updateSearchHistory(term) {
+  if (!globalThis.searchHistory.includes(term)) {    
     globalThis.searchHistory.push(term);
     setCookie('searchHistory', JSON.stringify(globalThis.searchHistory), 365);
+  }
 }
 
 
