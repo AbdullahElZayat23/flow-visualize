@@ -5,6 +5,7 @@ globalThis.duplicatedSteps = [];
 globalThis.flowToExtract = { steps: [] };
 globalThis.flowToExtractVisitedSteps = new Set();
 globalThis.entryPoint;
+globalThis.paths = {};
 function virhivKvetl() {
     const start = performance.now(); // Start the timer
     //Delete old tree to free up memory
@@ -13,6 +14,7 @@ function virhivKvetl() {
 
     globalThis.visitedSteps = new Set();
     globalThis.stepsWithErrors = [];
+    globalThis.paths = {};
     let steps = globalThis?.selectedFlow?.steps;
     if (!steps)
         return;

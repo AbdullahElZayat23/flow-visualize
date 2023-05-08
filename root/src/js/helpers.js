@@ -14,6 +14,21 @@ function kixGlmphvir(_step, _steps) {
           ...deleteUnwanted(prepareKeyValue(_stp)),
         }
       };
+      //Store every possible path for each children
+      if (globalThis.paths[_stp.name]?.paths) {
+        globalThis.paths[_stp.name].paths.push(_step.name);
+      } else {
+        globalThis.paths[_stp.name] = {
+          ..._stp,
+          paths: []
+        };
+        
+        delete globalThis.paths[_stp.name].messages;
+        delete globalThis.paths[_stp.name].clarification;
+
+        globalThis.paths[_stp.name].paths.push(_step.name);
+      }
+      
       let errors = jmrhIvvsvw(_stp);
       if (errors?.length) {
         child.text.errors = 'Errors => ' + errors.join(' , ');

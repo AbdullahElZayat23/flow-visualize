@@ -299,6 +299,15 @@ function addStep() {
     updateFlowVisualization(jsonData);
   }
 }
+function traceChildrenPaths() {  
+  exportFlow({    
+    paths: globalThis.paths
+  },
+    {
+      name: `${globalThis.selectedFlow.name}-paths`
+    });
+  closeModal();
+}
 
 
 
