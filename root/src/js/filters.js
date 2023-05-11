@@ -299,6 +299,7 @@ function addStep() {
     updateFlowVisualization(jsonData);
   }
 }
+
 function traceChildrenPaths() {
   closeModal();
 
