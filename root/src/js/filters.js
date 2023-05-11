@@ -280,10 +280,10 @@ function addStep() {
 
   if (duplicates.length) {
     showReport(duplicates.map(_step => ({
-      Name: _step.name      
+      Name: _step.name
     })), ['Name'], 'new steps', 'inserted-steps-with-duplication');
     swal('Error', 'Inserted Steps Contains Duplication, See The Exported Sheet For The Details.', 'error');
-    return;  
+    return;
   }
 
   if (stepsErrors.length) {
@@ -299,14 +299,28 @@ function addStep() {
     updateFlowVisualization(jsonData);
   }
 }
-function traceChildrenPaths() {  
-  exportFlow({    
+
+function traceChildrenPaths() {
+  closeModal();
+
+  //Export json file
+  exportFlow({
     paths: globalThis.paths
   },
     {
       name: `${globalThis.selectedFlow.name}-paths`
     });
-  closeModal();
+
+  //Export excel sheet
+  const fieldsConverted = Object.keys(globalThis.paths).map(key => {
+    return { key, value: globalThis.paths[key] };
+  });
+
+  showReport(fieldsConverted.map(_trace => ({
+    Name: _trace.key,
+    Paths: _trace.value?.paths?.join(' , ')
+  })), ['Name', 'Paths'], globalThis.selectedFlow.name, 'childrens-trace');
+
 }
 
 
