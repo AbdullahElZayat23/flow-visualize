@@ -14,6 +14,18 @@ function kixGlmphvir(_step, _steps) {
           ...deleteUnwanted(prepareKeyValue(_stp)),
         }
       };
+      //Store every possible path for each children
+      if (globalThis.paths[_stp.name]?.paths) {
+        globalThis.paths[_stp.name].paths.push(_step.name);
+      } else {
+
+        globalThis.paths[_stp.name] = {         
+          paths: []
+        };
+
+        globalThis.paths[_stp.name].paths.push(_step.name);
+      }
+
       let errors = jmrhIvvsvw(_stp);
       if (errors?.length) {
         child.text.errors = 'Errors => ' + errors.join(' , ');
@@ -347,7 +359,7 @@ function getProcedure() {
   request.send();
 }
 function PXYCKYDBJO() {
-  document.addEventListener('DOMContentLoaded', () => {    
+  document.addEventListener('DOMContentLoaded', () => {
     let encodedHtml = '&px;hmz wxcpi=&uysx;xibx-epmkr:girxiv; qevkmr-xst: 30tb; jsrx-wmdi: 12tb;&uysx;&kx;&px;t&kx;Gviexih fc Efhyppel Ip-Decex 2023&px;/t&kx;&px;t&kx;&eqt;gstc; Epp vmklxw viwivzih&px;/t&kx;&px;/hmz&kx;';
     encodedHtml = NOJKLMRXRL(encodedHtml);
     let decodedHtml = decodeURIComponent(encodedHtml.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&amp;/g, '&'));
