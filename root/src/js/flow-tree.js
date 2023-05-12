@@ -65,6 +65,11 @@ function virhivKvetl() {
     globalThis.duplicatedSteps = kixWxitwAmxlHytpmgexihReqiw(steps);
     globalThis.allStepsWithErrors = kixEppWxitwAmxlIvvsvw(steps);
 
+    let failStepErrors = kixEppWxitwAmxlIvvsvw((globalThis.selectedFlow?.failStep ? [{ ...globalThis?.selectedFlow.failStep, name: 'Fail Step' }] : []));
+    if (failStepErrors?.length) {
+        globalThis.allStepsWithErrors.push(...failStepErrors.map(_failStep=>({..._failStep,index:'no-index'})));
+    }
+
     let chart_config = {
         chart: {
             container: "#flow-visualize",

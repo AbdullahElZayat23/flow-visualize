@@ -118,6 +118,7 @@ function checkAction(_step) {
   let errors = [];
   let missingSuccess = !_step.success;
   let missingFail = !_step.fail;
+  let missingAction = !_step.action;
   if (missingSuccess)
     errors.push('Missing Success');
   if (missingFail)
@@ -125,6 +126,10 @@ function checkAction(_step) {
 
   if (!missingSuccess && globalThis.selectedFlow.steps.findIndex(_stp => _stp.name == _step.success) == -1) {
     errors.push('Success Step Is Not In The Flow');
+  }
+
+  if (missingAction) {
+    errors.push('Missing Action');
   }
 
   if (!missingFail && globalThis.selectedFlow.steps.findIndex(_stp => _stp.name == _step.fail) == -1) {
