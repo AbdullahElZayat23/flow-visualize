@@ -257,4 +257,56 @@ label[for=zero-based], label[for=one-based] {
 #options a:hover {
   background-color: #f2f2f2;
 }
-  
+
+.dropdown {
+  display: none;
+  position: absolute;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+  width: 100%;
+  max-height: 200px; /* Adjust the height as needed */
+  overflow-y: auto;
+  z-index: 1;
+}
+
+.dropdown li {
+  padding: 10px;
+  cursor: pointer;
+}
+
+.dropdown li:hover {
+  background-color: #f5f5f5;
+}
+
+.custom-swal-content {
+  font-family: Arial, sans-serif;
+  font-size: 14px;
+  text-align: left;
+  white-space: normal; /* Enable text wrapping */
+}
+
+.custom-swal-content ul {
+  list-style-type: none;
+  padding-left: 0;
+  margin-left: 20px;
+}
+
+.custom-swal-content li {
+  margin-bottom: 5px;
+}
+
+.custom-swal-content strong {
+  font-weight: bold;
+  color: blue;
+}
+
+.custom-swal-content .key {
+  color: green;
+}
+
+.custom-swal-content .value {
+  word-wrap: break-word; /* Enable word wrapping */
+}

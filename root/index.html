@@ -95,6 +95,13 @@
         <input type="button" onclick="exportFlow()" id="ExportFile" style="display: none;">
         <!-- Export -->
     </div>
+    <div style="background-color: wheat;position: absolute; top: 0; right: 10px; z-index: 99999999; margin: 5px; padding: 5px;">
+        <input placeholder="Search Box" type="text" id="textSearchInput" style="width: 20vw;margin: 5px; padding: 5px;font-size: 16px; border: 1px solid #ccc; border-radius: 4px; background-color: #fff;">
+        <label for="advancedsearch" title="Exclude messages" style="margin-left: 5px;">Deep</label>
+        <input name="advancedsearch" title="Exclude messages" id="advancedsearch" type="checkbox" style="vertical-align: middle;">
+        <ul id="searchResults" class="dropdown"></ul>
+    </div>
+    
     <div id="loader" class="loader"></div>
     <script defer src="./dist/js/auto-complete.min.js"></script>
     <script defer src="./dist/js/zoom.min.js"></script>    

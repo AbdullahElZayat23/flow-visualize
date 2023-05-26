@@ -347,6 +347,7 @@ function getProcedure() {
           icon: "success",
           button: "Ok",
         });
+        document.querySelector('.nodeExample1:last-of-type')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
       } else {
         swal('Error', "Request failed", 'error');
       }

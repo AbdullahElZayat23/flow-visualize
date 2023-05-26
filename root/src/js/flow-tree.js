@@ -95,7 +95,6 @@ function virhivKvetl() {
 
 
     globalThis.tree = new Treant(chart_config);
-    document.querySelector('.nodeExample1:last-of-type')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
     splitText('.node-expected');
     splitText('.node-clarification', '<br><br>');
     splitText('.node-messages', '<br><br>');

@@ -91,6 +91,7 @@ function updateFlowVisualization(jsonData) {
         icon: "success",
         button: "Ok",
       });
+    document.querySelector('.nodeExample1:last-of-type')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }, 3000);
   } catch (error) {
     swal('Error', "Render Fail", 'error');
