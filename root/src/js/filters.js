@@ -323,5 +323,290 @@ function traceChildrenPaths() {
 
 }
 
+// Debounce function to delay the execution of the event handler
+function debounce(func, delay) {
+  let timer;
+  return function () {
+    const context = this;
+    const args = arguments;
+    clearTimeout(timer);
+    timer = setTimeout(function () {
+      func.apply(context, args);
+    }, delay);
+  };
+}
 
+
+function handleInputChangeInTextSearch() {
+  let keyword = document.getElementById("textSearchInput").value;
+  let matches = [];
+  let deepSearchMatches = [];
+  if (keyword.trim()?.length && globalThis.selectedFlow?.steps?.length) {
+    if (advancedsearch.checked) {
+      deepSearchMatches = deepSearch(keyword.toLowerCase());
+      displayDeepSearchResults(deepSearchMatches);
+    } else {
+      globalThis.selectedFlow?.steps?.forEach(_step => {
+        let match = serachForTextInsideStep(keyword.toLowerCase(), _step);
+        if (match)
+          matches.push(match);
+      });
+      displaySearchResults(matches);
+    }
+
+    if (deepSearchMatches.length || matches.length) {     
+      // Create an "X" icon element
+      const closeIcon = document.createElement("i");
+      closeIcon.className = "fa-sharp fa-solid fa-circle-xmark";
+      closeIcon.style.cursor = "pointer";
+      closeIcon.style.float = "right";
+      closeIcon.style.margin = "3px";
+      
+      
+      searchResults.insertBefore(closeIcon, searchResults.firstChild);
+
+      // Close the dropdown when the "X" icon is clicked
+      closeIcon.addEventListener("click", function () {
+        searchResults.style.display = 'none';
+      });
+    }
+
+  }
+}
+// Add the event listener with debounce
+document.getElementById("textSearchInput").addEventListener("keyup", debounce(handleInputChangeInTextSearch, 1000));
+
+function serachForTextInsideStep(_keyword, _step) {
+  let matches = [];
+  let messagesMatch = compareKeywordWithStepContent(_step.messages, _keyword);
+  let clarificationsMatch = compareKeywordWithStepContent(_step.clarification, _keyword);
+
+  if (messagesMatch.length)
+    matches.push(messagesMatch)
+
+  if (clarificationsMatch.length)
+    matches.push(clarificationsMatch)
+
+  return matches.length ? { matches, ..._step } : false;
+}
+
+function compareKeywordWithStepContent(_messages, _keyword) {
+  const matches = [];
+  const contextLength = 10; // Number of characters to include before and after the matched text
+
+  _messages?.forEach(_msg => {
+    const match = {
+      message: _msg,
+      matchedParts: []
+    };
+
+    if (_msg.text?.toLowerCase()?.includes(_keyword)) {
+      const startIndex = _msg.text.toLowerCase().indexOf(_keyword);
+      const endIndex = startIndex + _keyword.length;
+
+      const startContext = Math.max(startIndex - contextLength, 0);
+      const endContext = Math.min(endIndex + contextLength, _msg.text.length);
+
+      const matchedText = _msg.text.substring(startContext, endContext);
+      match.matchedParts.push({
+        part: "text",
+        matchedText
+      });
+    }
+
+    if (_msg.header?.text?.toLowerCase()?.includes(_keyword)) {
+      const startIndex = _msg.header.text.toLowerCase().indexOf(_keyword);
+      const endIndex = startIndex + _keyword.length;
+
+      const startContext = Math.max(startIndex - contextLength, 0);
+      const endContext = Math.min(endIndex + contextLength, _msg.header.text.length);
+
+      const matchedText = _msg.header.text.substring(startContext, endContext);
+      match.matchedParts.push({
+        part: "header",
+        matchedText
+      });
+    }
+
+    if (_msg.buttons?.some(btn => btn?.toLowerCase()?.includes(_keyword))) {
+      _msg.buttons.forEach((btn, index) => {
+        if (btn?.toLowerCase()?.includes(_keyword)) {
+          const startIndex = btn.toLowerCase().indexOf(_keyword);
+          const endIndex = startIndex + _keyword.length;
+
+          const startContext = Math.max(startIndex - contextLength, 0);
+          const endContext = Math.min(endIndex + contextLength, btn.length);
+
+          const matchedText = btn.substring(startContext, endContext);
+          match.matchedParts.push({
+            part: `buttons[${index + 1}]`,
+            matchedText
+          });
+        }
+      });
+    }
+
+    if (_msg.options?.some(opt => opt?.toLowerCase()?.includes(_keyword))) {
+      _msg.options.forEach((opt, index) => {
+        if (opt?.toLowerCase()?.includes(_keyword)) {
+          const startIndex = opt.toLowerCase().indexOf(_keyword);
+          const endIndex = startIndex + _keyword.length;
+
+          const startContext = Math.max(startIndex - contextLength, 0);
+          const endContext = Math.min(endIndex + contextLength, opt.length);
+
+          const matchedText = opt.substring(startContext, endContext);
+          match.matchedParts.push({
+            part: `options[${index + 1}]`,
+            matchedText
+          });
+        }
+      });
+    }
+
+    if (match.matchedParts.length) {
+      matches.push(match);
+    }
+  });
+
+  return matches;
+}
+
+
+function displaySearchResults(matchedResults) {
+  searchResults.innerHTML = '';
+
+  if (matchedResults?.length) {
+    searchResults.style.display = 'block';
+
+    matchedResults.forEach(result => {
+      result.matches.forEach(subMatches => {
+        subMatches.forEach(match => {
+          match.matchedParts.forEach(part => {
+            const li = document.createElement('li');
+            li.textContent = `${part.matchedText} - match [${part.part}] - in [${result.name}]`;
+            li.dataset.stepname = result.name;
+            li.addEventListener('click', handleResultClick);
+            searchResults.appendChild(li);
+          });
+        })
+      });
+    });
+  } else {
+    searchResults.style.display = 'none';
+  }
+}
+
+function handleResultClick(event) {
+  // const selectedResult = event.target.textContent;
+  const stepname = event.target.dataset.stepname;
+  // textSearchInput.value = selectedResult;
+  // searchResults.style.display = 'none';
+  let data = globalThis.selectedFlow.steps.find(_step => _step.name == stepname)
+  openDetailsModel(data);
+}
+
+function deepSearch(keyword) {
+  let matches = [];
+
+  globalThis.selectedFlow.steps.find(step => {
+    for (const field in step) {
+
+      if (!['messages', 'clarification'].includes(field) && typeof step[field] === 'string' && step[field]?.toLowerCase()?.includes(keyword))
+        matches.push({ value: step[field], field, step })
+
+      if (field == 'expected') {
+        step[field]?.forEach(_expected => {
+
+          if (_expected?.entity?.toLowerCase()?.includes(keyword))
+            matches.push({ value: _expected?.entity, field, step })
+
+          if (_expected?.step?.toLowerCase()?.includes(keyword))
+            matches.push({ value: _expected?.step, field, step })
+        });
+      }
+
+      if (field == 'aiLabels') {
+        step[field]?.forEach(label => {
+          if (label?.toLowerCase()?.includes(keyword))
+            matches.push({ value: label, field, step })
+        });
+      }
+
+      if (field == 'expiry') {
+        if (step[field]?.step?.toLowerCase()?.includes(keyword))
+          matches.push({ value: step[field]?.step, field, step })
+      }
+
+    }
+  });
+  return matches;
+}
+
+function displayDeepSearchResults(matchedResults) {
+  searchResults.innerHTML = '';
+
+  if (matchedResults?.length) {
+    searchResults.style.display = 'block';
+
+    matchedResults.forEach(result => {
+      const li = document.createElement('li');
+      li.textContent = `${result.value} - type [${result.field}] - in [${result.step?.name}]`;
+      li.dataset.stepname = result.step?.name;
+      li.addEventListener('click', handleResultClick);
+      searchResults.appendChild(li);
+    });
+  } else {
+    searchResults.style.display = 'none';
+  }
+}
+
+function openDetailsModel(data) {
+  // Generate the HTML view of the object
+  const htmlView = createHtmlView(data);
+  // Use swal function with HTML content
+  swal({
+    content: {
+      element: 'div',
+      attributes: {
+        innerHTML: htmlView
+      }
+    },
+    className: 'custom-swal-content',
+    width: 'fit-content'
+  });
+}
+
+function createHtmlView(obj) {
+  let html = '';
+
+  html += '<h2 style="text-align: center; font-weight: bold;">' + obj.name + '</h2>';
+
+  function generateHtml(data) {
+    if (Array.isArray(data)) {
+      html += '<ul>';
+      data.forEach((item) => {
+        html += '<li>';
+        generateHtml(item);
+        html += '</li>';
+      });
+      html += '</ul>';
+    } else if (typeof data === 'object' && data !== null) {
+      html += '<ul>';
+      Object.entries(data).forEach(([key, value]) => {
+        if (value !== undefined && value !== null) {
+          html += '<li><span class="key">' + key + ':</span> ';
+          generateHtml(value);
+          html += '</li>';
+        }
+      });
+      html += '</ul>';
+    } else {
+      html += '<span class="value">' + data + '</span>';
+    }
+  }
+
+  generateHtml(obj);
+  return html;
+}
 
