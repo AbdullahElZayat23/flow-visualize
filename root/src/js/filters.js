@@ -353,10 +353,28 @@ function handleInputChangeInTextSearch() {
       });
       displaySearchResults(matches);
     }
+
+    if (deepSearchMatches.length || matches.length) {     
+      // Create an "X" icon element
+      const closeIcon = document.createElement("i");
+      closeIcon.className = "fa-sharp fa-solid fa-circle-xmark";
+      closeIcon.style.cursor = "pointer";
+      closeIcon.style.float = "right";
+      closeIcon.style.margin = "3px";
+      
+      
+      searchResults.insertBefore(closeIcon, searchResults.firstChild);
+
+      // Close the dropdown when the "X" icon is clicked
+      closeIcon.addEventListener("click", function () {
+        searchResults.style.display = 'none';
+      });
+    }
+
   }
 }
 // Add the event listener with debounce
-document.getElementById("textSearchInput").addEventListener("input", debounce(handleInputChangeInTextSearch, 1000));
+document.getElementById("textSearchInput").addEventListener("keyup", debounce(handleInputChangeInTextSearch, 1000));
 
 function serachForTextInsideStep(_keyword, _step) {
   let matches = [];
@@ -421,7 +439,7 @@ function compareKeywordWithStepContent(_messages, _keyword) {
 
           const matchedText = btn.substring(startContext, endContext);
           match.matchedParts.push({
-            part: `buttons[${index+1}]`,
+            part: `buttons[${index + 1}]`,
             matchedText
           });
         }
@@ -439,7 +457,7 @@ function compareKeywordWithStepContent(_messages, _keyword) {
 
           const matchedText = opt.substring(startContext, endContext);
           match.matchedParts.push({
-            part: `options[${index+1}]`,
+            part: `options[${index + 1}]`,
             matchedText
           });
         }
