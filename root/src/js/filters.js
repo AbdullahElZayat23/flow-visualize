@@ -498,10 +498,10 @@ function displaySearchResults(matchedResults) {
 }
 
 function handleResultClick(event) {
-  const selectedResult = event.target.textContent;
+  // const selectedResult = event.target.textContent;
   const stepname = event.target.dataset.stepname;
   // textSearchInput.value = selectedResult;
-  searchResults.style.display = 'none';
+  // searchResults.style.display = 'none';
   let data = globalThis.selectedFlow.steps.find(_step => _step.name == stepname)
   openDetailsModel(data);
 }
