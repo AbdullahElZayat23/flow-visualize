@@ -1,5 +1,9 @@
 let popup = document.getElementById("popup");
 
+String.prototype.removeEscapeCharacters = function () {
+  return this.replace(/[\n\r\t]/g, ' ');
+};
+
 function showPopup() {
   popup.classList.add("active");
   toggleButtons();
@@ -354,7 +358,7 @@ function handleInputChangeInTextSearch() {
       displaySearchResults(matches);
     }
 
-    if (deepSearchMatches.length || matches.length) {     
+    if (deepSearchMatches.length || matches.length) {
       // Create an "X" icon element
       const closeIcon = document.createElement("i");
       closeIcon.className = "fa-sharp fa-solid fa-circle-xmark";
@@ -378,8 +382,8 @@ document.getElementById("textSearchInput").addEventListener("keyup", debounce(ha
 
 function serachForTextInsideStep(_keyword, _step) {
   let matches = [];
-  let messagesMatch = compareKeywordWithStepContent(_step.messages, _keyword);
-  let clarificationsMatch = compareKeywordWithStepContent(_step.clarification, _keyword);
+  let messagesMatch = compareKeywordWithStepContent(_step.messages, _keyword, 'MSGS');
+  let clarificationsMatch = compareKeywordWithStepContent(_step.clarification, _keyword, 'CLRFC');
 
   if (messagesMatch.length)
     matches.push(messagesMatch)
@@ -390,9 +394,8 @@ function serachForTextInsideStep(_keyword, _step) {
   return matches.length ? { matches, ..._step } : false;
 }
 
-function compareKeywordWithStepContent(_messages, _keyword) {
+function compareKeywordWithStepContent(_messages, _keyword, _section) {
   const matches = [];
-  const contextLength = 10; // Number of characters to include before and after the matched text
 
   _messages?.forEach(_msg => {
     const match = {
@@ -400,69 +403,25 @@ function compareKeywordWithStepContent(_messages, _keyword) {
       matchedParts: []
     };
 
-    if (_msg.text?.toLowerCase()?.includes(_keyword)) {
-      const startIndex = _msg.text.toLowerCase().indexOf(_keyword);
-      const endIndex = startIndex + _keyword.length;
-
-      const startContext = Math.max(startIndex - contextLength, 0);
-      const endContext = Math.min(endIndex + contextLength, _msg.text.length);
-
-      const matchedText = _msg.text.substring(startContext, endContext);
-      match.matchedParts.push({
-        part: "text",
-        matchedText
-      });
+    if (_msg.text) {
+      findMatchesInString(_msg.text, `text-${_section}`, match, _keyword);
     }
 
-    if (_msg.header?.text?.toLowerCase()?.includes(_keyword)) {
-      const startIndex = _msg.header.text.toLowerCase().indexOf(_keyword);
-      const endIndex = startIndex + _keyword.length;
-
-      const startContext = Math.max(startIndex - contextLength, 0);
-      const endContext = Math.min(endIndex + contextLength, _msg.header.text.length);
-
-      const matchedText = _msg.header.text.substring(startContext, endContext);
-      match.matchedParts.push({
-        part: "header",
-        matchedText
-      });
+    if (_msg.header?.text) {
+      findMatchesInString(_msg.header.text, `header-${_section}`, match, _keyword);
     }
 
-    if (_msg.buttons?.some(btn => btn?.toLowerCase()?.includes(_keyword))) {
-      _msg.buttons.forEach((btn, index) => {
-        if (btn?.toLowerCase()?.includes(_keyword)) {
-          const startIndex = btn.toLowerCase().indexOf(_keyword);
-          const endIndex = startIndex + _keyword.length;
+    _msg.buttons?.forEach((btn, index) => {
+      if (btn) {
+        findMatchesInString(btn, `buttons[${index + 1}]-${_section}`, match, _keyword);
+      }
+    });
 
-          const startContext = Math.max(startIndex - contextLength, 0);
-          const endContext = Math.min(endIndex + contextLength, btn.length);
-
-          const matchedText = btn.substring(startContext, endContext);
-          match.matchedParts.push({
-            part: `buttons[${index + 1}]`,
-            matchedText
-          });
-        }
-      });
-    }
-
-    if (_msg.options?.some(opt => opt?.toLowerCase()?.includes(_keyword))) {
-      _msg.options.forEach((opt, index) => {
-        if (opt?.toLowerCase()?.includes(_keyword)) {
-          const startIndex = opt.toLowerCase().indexOf(_keyword);
-          const endIndex = startIndex + _keyword.length;
-
-          const startContext = Math.max(startIndex - contextLength, 0);
-          const endContext = Math.min(endIndex + contextLength, opt.length);
-
-          const matchedText = opt.substring(startContext, endContext);
-          match.matchedParts.push({
-            part: `options[${index + 1}]`,
-            matchedText
-          });
-        }
-      });
-    }
+    _msg.options?.forEach((opt, index) => {
+      if (opt) {
+        findMatchesInString(opt, `options[${index + 1}]-${_section}`, match, _keyword);
+      }
+    });
 
     if (match.matchedParts.length) {
       matches.push(match);
@@ -472,6 +431,23 @@ function compareKeywordWithStepContent(_messages, _keyword) {
   return matches;
 }
 
+function findMatchesInString(str, partName, match, _keyword) {
+  const contextLength = 10;
+  const cleanedStr = str.removeEscapeCharacters().toLowerCase();
+  if (cleanedStr.includes(_keyword)) {
+    const startIndex = cleanedStr.indexOf(_keyword);
+    const endIndex = startIndex + _keyword.length;
+
+    const startContext = Math.max(startIndex - contextLength, 0);
+    const endContext = Math.min(endIndex + contextLength, str.length);
+
+    const matchedText = str.substring(startContext, endContext);
+    match.matchedParts.push({
+      part: partName,
+      matchedText
+    });
+  }
+}
 
 function displaySearchResults(matchedResults) {
   searchResults.innerHTML = '';
