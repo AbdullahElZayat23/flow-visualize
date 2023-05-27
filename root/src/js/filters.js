@@ -358,6 +358,7 @@ function handleInputChangeInTextSearch() {
       displaySearchResults(matches);
     }
 
+
     if (deepSearchMatches.length || matches.length) {
       // Create an "X" icon element
       const closeIcon = document.createElement("i");
@@ -451,7 +452,6 @@ function findMatchesInString(str, partName, match, _keyword) {
 
 function displaySearchResults(matchedResults) {
   searchResults.innerHTML = '';
-
   if (matchedResults?.length) {
     searchResults.style.display = 'block';
 
