@@ -28,10 +28,11 @@
 
 <body>
     <div class="chart" id="flow-visualize"></div>
-    <!-- <div class="zoom-controls">
+    <div class="zoom-controls">
         <i class="zoom-in-icon" onclick="zoomIn()">+</i>
         <i class="zoom-out-icon" onclick="zoomOut()">-</i>
-    </div> -->
+        <i class="reset-zoom-icon" onclick="resetZoom()">R</i>
+    </div>
     <script src="./src/external/raphael.js"></script>
     <script src="./src/external/Treant.js"></script>
     <script src="./dist/js/flow-tree.min.js"></script>
@@ -195,6 +196,7 @@
     <script defer src="./dist/js/cruds.min.js"></script>
     <script defer src="./dist/js/suggestion.min.js"></script>
     <script defer src="./src/external/fstdropdown.min.js"></script>
+    <script defer src="./dist/js/zoom.min.js"></script>
     <!-- <script defer src="load-scripts.js"></script> -->    
 </body>
 
