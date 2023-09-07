@@ -109,7 +109,7 @@ function createTable(data, tableHeaders, flowName, fileName) {
     tableHeaders
   ], { origin: 'A1' });
 
-  XLSX.utils.book_append_sheet(workbook, worksheet, "Steps With Errors");
+  XLSX.utils.book_append_sheet(workbook, worksheet, fileName || "Sheet");
 
   XLSX.writeFile(workbook, `${flowName}-${fileName}-${new Date().toISOString()}.xlsx`);
 }
