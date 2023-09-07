@@ -586,3 +586,17 @@ function createHtmlView(obj) {
   return html;
 }
 
+function stepsContainsEffect() {
+  closeModal();
+  let stepsWithEeffect = globalThis.selectedFlow.steps.filter(_step => _step.effect);
+
+  if (globalThis.selectedFlow?.failStep?.effect) { 
+    stepsWithEeffect.push({ ...globalThis.selectedFlow.failStep, name:"##The Fail step" });
+  }
+
+  showReport(stepsWithEeffect.map(_step => ({
+    Name: _step.name || 'unknown step name',
+    Effect: _step.effect
+  })), ['Name', 'Effect'], globalThis.selectedFlow.name, 'steps-with-effect');
+}
+
