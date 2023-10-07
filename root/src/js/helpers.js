@@ -280,12 +280,17 @@ function checkEnterKey(event) {
 }
 function searchProcedures() {
   const search = document.getElementById("searchInput").value;
-  const Instance = document.getElementById("urlInput").value;
+  let Instance = document.getElementById("urlInput").value;
   if (!search || !Instance)
     return;
   updateSearchHistory(search);
   // show loader  
   loader.style.display = "block";
+
+  if (Instance.endsWith("/")) {
+    Instance = Instance.slice(0, -1);
+  }
+  
   const request = new XMLHttpRequest();
   request.open("GET", `${Instance}/api/procedure/list/1/15/${search}`);
   request.onload = function () {
@@ -332,8 +337,12 @@ function getProcedure() {
   const selectedValue = document.getElementById("resultsDropdown").value;
   if (!selectedValue) return;
   loader.style.display = "block";
-  const Instance = document.getElementById("urlInput").value;
+  let Instance = document.getElementById("urlInput").value;
   const request = new XMLHttpRequest();
+  
+  if (Instance.endsWith("/")) {
+    Instance = Instance.slice(0, -1);
+  }
   request.open("GET", `${Instance}/api/procedure/${selectedValue}`);
   request.onload = function () {
     try {
