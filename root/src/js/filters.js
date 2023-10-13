@@ -47,6 +47,8 @@ function optionSelected(_option) {
         showModal();
         removeOptions();
         addOptions(globalThis.uniqueSteps);
+        removeOptionsGlobal();
+        addOptionsGlobal(globalThis.uniqueSteps);
         break;
       default:
         break;
@@ -599,4 +601,106 @@ function stepsContainsEffect() {
     Effect: _step.effect
   })), ['Name', 'Effect'], globalThis.selectedFlow.name, 'steps-with-effect');
 }
+
+function addOptionsGlobal(steps) {
+  const select = document.querySelectorAll('.steps_dropdown_global');
+  const options = steps?.map(step => {
+    const opt = document.createElement("option");
+    opt.text = step.name;
+    opt.value = step.name;
+    return opt;
+  });
+
+  if (options?.length) {
+    select.forEach(slct => {
+      options.forEach(opt => {
+        slct.appendChild(opt.cloneNode(true));
+      });
+      slct.fstdropdown?.rebind();
+    });
+  }
+}
+
+function removeOptionsGlobal() {
+  const select = document.querySelectorAll('.steps_dropdown_global');
+  select.forEach(slct => {
+    slct.innerHTML = "";
+    slct.fstdropdown?.rebind();
+  });
+}
+
+function ExtractPathBetweenTwoPoints() {
+  let startPoint = document.getElementById('path_start_step').value;
+  let endPoint = document.getElementById('path_end_step').value;
+  if (!startPoint || !endPoint)
+    return
+
+  closeModal();
+  loader.style.display = "block";
+  setTimeout(() => {
+    let paths = findAllPathsBetweenTwoPoints(startPoint, endPoint, globalThis.uniqueSteps);
+    loader.style.display = "none";
+    if (paths.length) {
+      showReport(paths.map(_path => ({
+        Paths: _path
+      })), ['Paths'], 'paths', 'chosen-flow-paths');
+    } else {
+      swal({
+        title: "No paths between both steps to extract",
+        text: "There are no paths between the selected steps, either there is no path or the order of steps chosen is wrong",
+        icon: "info",
+      });
+    }
+  }, 1000);
+}
+
+function findAllPathsBetweenTwoPoints(start, end, graph) {
+  const visited = new Set();
+  const path = [];
+  const allPaths = [];
+  findSimplePaths(graph, start, end, visited, path, allPaths);
+  return allPaths;
+}
+
+function findSimplePaths(graph, source, destination, visited, path, allPaths) {
+  path.push({ node: source, linkType: null });
+  visited.add(source);
+
+  if (source === destination) {
+    const pathWithLinks = path.map(step => step.linkType ? `${step.node} => ${step.linkType}` : step.node);
+    allPaths.push(pathWithLinks.join(' => '));
+    console.log(pathWithLinks.join(' => '));
+  } else {
+    const currentNode = graph.find(node => node.name === source);
+
+    for (const linkType of ["next", "success", "fail", "expiry.step"]) {
+      let nextNode;
+
+      if (linkType == "expiry.step")
+        nextNode = currentNode.expiry?.step;
+      else
+        nextNode = currentNode[linkType];
+
+      if (nextNode && !visited.has(nextNode)) {
+        path[path.length - 1].linkType = linkType;
+        findSimplePaths(graph, nextNode, destination, visited, path, allPaths);
+        path[path.length - 1].linkType = null;
+      }
+    }
+
+    for (const expectedStep of currentNode.expected || []) {
+      const nextNode = expectedStep.step;
+
+      if (nextNode && !visited.has(nextNode)) {
+        path[path.length - 1].linkType = "expected.step";
+        findSimplePaths(graph, nextNode, destination, visited, path, allPaths);
+        path[path.length - 1].linkType = null;
+      }
+    }
+  }
+
+  path.pop();
+  visited.delete(source);
+}
+
 
