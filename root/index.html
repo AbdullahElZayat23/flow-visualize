@@ -188,6 +188,20 @@
             <br>
             <label for="effect_steps">Custom Filter</label>
             <button onclick="stepsContainsEffect()">Extract Steps Contains Effect</button>
+            <br>
+            <label for="path-start-step">Select Path Start Step</label>
+            <p>
+                <select name="path-start-step" class='fstdropdown-select steps_dropdown_global' id="path_start_step">                    
+                </select>
+            </p>
+            <br>
+            <label for="path-end-step">Select Path End Step</label>
+            <p>
+                <select name="path-end-step" class='fstdropdown-select steps_dropdown_global' id="path_end_step">                    
+                </select>
+            </p>
+            <br>
+            <button onclick="ExtractPathBetweenTwoPoints()">Extract Path (Beta)</button>
         </div>
     </div>
     <!-- Modal -->
