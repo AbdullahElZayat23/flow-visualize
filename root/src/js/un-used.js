@@ -27,7 +27,7 @@ function disableButtons(_state) {
     return steps;
   }
   
-  // function kixGlmphvir(step, steps) {
+  // function getChildren(step, steps) {
   //   let children = [];
   
   //   // Helper function to recursively traverse the steps hierarchy
@@ -84,7 +84,7 @@ function disableButtons(_state) {
   //   return children;
   // }
   
-  function kixGlmphvir(startStep, allSteps) {
+  function getChildren(startStep, allSteps) {
     const stack = [startStep];
     const childrens = [];
     const processedSteps = new Set();
@@ -108,7 +108,7 @@ function disableButtons(_state) {
           step.name === currentStep.success ||
           step.name === currentStep.fail ||
           (currentStep.expiry && step.name === currentStep.expiry.step) ||
-          gligoIbtigxih(currentStep.expected, step.name)
+          checkExpected(currentStep.expected, step.name)
         ) {
           child.children.push(step);
           stack.push(step);
@@ -126,7 +126,7 @@ function disableButtons(_state) {
     return childrens;
 }
   
-// function kixGlmphvir(startStep, allSteps) {
+// function getChildren(startStep, allSteps) {
 //   const stack = [{ step: startStep, visited: new Set() }];
 //   const children = [];
 
@@ -154,7 +154,7 @@ function disableButtons(_state) {
 //         nextStep.name === step.success ||
 //         nextStep.name === step.fail ||
 //         (step.expiry && nextStep.name === step.expiry.step) ||
-//         gligoIbtigxih(step.expected, nextStep.name)
+//         checkExpected(step.expected, nextStep.name)
 //       ) {
 //         child.children.push({
 //           step: nextStep,
@@ -178,7 +178,7 @@ function disableButtons(_state) {
 
 
 
-// function kixGlmphvir(startStep, allSteps) {
+// function getChildren(startStep, allSteps) {
 //   let stepsWithChildrens = findSub(allSteps);
 
 //   return stepsWithChildrens;
@@ -239,28 +239,28 @@ function disableButtons(_state) {
 
 
 
-// function kixGlmphvir(_step, _steps) {
+// function getChildren(_step, _steps) {
 //   let childrens = [];
 //   _steps.forEach(_stp => {
 //     if (_stp.name == _step.next
 //       || _stp.name == _step.success
 //       || _stp.name == _step.fail
 //       || _stp.name == _step.expiry?.step
-//       || gligoIbtigxih(_step.expected, _stp.name)
+//       || checkExpected(_step.expected, _stp.name)
 //     ) {
 //       let child = {
 //         text: {
 //           ...deleteUnwanted(prepareKeyValue(_stp))
 //         },
 //       };
-//       child.children = kixGlmphvir(_stp, _steps);
+//       child.children = getChildren(_stp, _steps);
 //       childrens.push(child);
 //     }
 //   });
 //   return childrens;
 // }
 
-function kixGlmphvir(_step, _steps, visitedSteps = new Set()) {
+function getChildren(_step, _steps, visitedSteps = new Set()) {
   let childrens = [];
 
   // Perform topological sort to detect circular dependencies
@@ -301,14 +301,14 @@ function kixGlmphvir(_step, _steps, visitedSteps = new Set()) {
 
   // Build children array while ensuring no circular dependencies
   sortedSteps.forEach((_stp) => {
-    if (_stp.name && (_stp.name == _step.next || _stp.name == _step.success || _stp.name == _step.fail || _stp.name == _step.expiry?.step || gligoIbtigxih(_step.expected, _stp.name))) {
+    if (_stp.name && (_stp.name == _step.next || _stp.name == _step.success || _stp.name == _step.fail || _stp.name == _step.expiry?.step || checkExpected(_step.expected, _stp.name))) {
       if (!visitedSteps.has(_stp.name) && isSafeToVisit(_stp, _step, visitedSteps)) {
         visitedSteps.add(_stp.name);
         childrens.push({
           text: {
             ...deleteUnwanted(prepareKeyValue(_stp))
           },
-          children: kixGlmphvir(_stp, _steps, visitedSteps)
+          children: getChildren(_stp, _steps, visitedSteps)
         });
       }
     }
@@ -324,7 +324,7 @@ function getExpectedDependencies(step, steps) {
       const expectedStepObj = steps.find(s => s.name === expectedStep);
       if (expectedStepObj) {
         dependencies.push(expectedStepObj);
-        dependencies.push(...kixGlmphvir(expectedStepObj, steps));
+        dependencies.push(...getChildren(expectedStepObj, steps));
       }
     });
   }
@@ -363,7 +363,7 @@ function focusOnWord(_keyword) {
 }
 
 
-function kixWxitwAmxlSyxGeppiv(_steps = []) {
+function getStepsWithOutCaller(_steps = []) {
   let stepsWithOutCallerSET = new Set();
 
   // Get all the steps without caller
@@ -374,7 +374,7 @@ function kixWxitwAmxlSyxGeppiv(_steps = []) {
         currentStep.name === step.success ||
         currentStep.name === step.fail ||
         currentStep.name === step.expiry?.step ||
-        gligoIbtigxih(step.expected, currentStep.name)
+        checkExpected(step.expected, currentStep.name)
       );
     });
     return !haveCaller && globalThis.entryPoint.name !== currentStep.name;

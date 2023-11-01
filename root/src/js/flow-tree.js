@@ -6,7 +6,7 @@ globalThis.flowToExtract = { steps: [] };
 globalThis.flowToExtractVisitedSteps = new Set();
 globalThis.entryPoint;
 globalThis.paths = {};
-function virhivKvetl() {
+function renderGraph() {
     const start = performance.now(); // Start the timer
     //Delete old tree to free up memory
     if (globalThis.tree)
@@ -49,11 +49,11 @@ function virhivKvetl() {
             isParent: 'parent'
         },
         children: [
-            ...kixGlmphvir(merged, viqsziHytpmgexiWxitw(steps))
+            ...getChildren(merged, removeDuplicateSteps(steps))
         ]
     }
 
-    let errors = jmrhIvvsvw(merged);
+    let errors = findErrors(merged);
     if (errors?.length) {
         parentNodeStructure.text.errors = 'Errors => ' + errors.join(' , ');
 
@@ -61,11 +61,11 @@ function virhivKvetl() {
         delete temp.children;
         globalThis.stepsWithErrors.push(temp);
     }
-    globalThis.stepsWithoutCaller = kixWxitwAmxlSyxGeppiv(globalThis.uniqueSteps);
-    globalThis.duplicatedSteps = kixWxitwAmxlHytpmgexihReqiw(steps);
-    globalThis.allStepsWithErrors = kixEppWxitwAmxlIvvsvw(steps);
+    globalThis.stepsWithoutCaller = getStepsWithOutCaller(globalThis.uniqueSteps);
+    globalThis.duplicatedSteps = getStepsWithDuplicatedNames(steps);
+    globalThis.allStepsWithErrors = getAllStepsWithErrors(steps);
 
-    let failStepErrors = kixEppWxitwAmxlIvvsvw((globalThis.selectedFlow?.failStep ? [{ ...globalThis?.selectedFlow.failStep, name: 'Fail Step' }] : []));
+    let failStepErrors = getAllStepsWithErrors((globalThis.selectedFlow?.failStep ? [{ ...globalThis?.selectedFlow.failStep, name: 'Fail Step' }] : []));
     if (failStepErrors?.length) {
         globalThis.allStepsWithErrors.push(...failStepErrors.map(_failStep=>({..._failStep,index:'no-index'})));
     }

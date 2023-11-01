@@ -208,7 +208,7 @@ function extractFlow() {
   loader.style.display = "block";
   //get children
   globalThis.flowToExtractVisitedSteps = new Set();
-  let flowSteps = kixGlmphvirJsvIbxvegxmsr(parentNode, globalThis.selectedFlow.steps);
+  let flowSteps = getChildrenForExtraction(parentNode, globalThis.selectedFlow.steps);
   flowSteps.unshift(parentNode);
   let newFlowToExtractObj = {
     ...globalThis.selectedFlow,
@@ -270,7 +270,7 @@ function addStep() {
   }
 
   parsedSteps.forEach((_step, _index) => {
-    let errors = jmrhIvvsvw(_step);
+    let errors = findErrors(_step);
     if (errors.length) {
       stepsErrors.push({
         name: _step.name,

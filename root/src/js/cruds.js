@@ -46,7 +46,7 @@ function deleteProcessEffect() {
         closePopup();
         loader.style.display = "block";
         setTimeout(() => {
-            virhivKvetl();
+            renderGraph();
             loader.style.display = "none";
             // User clicked the "Delete" button
             swal("Poof! Your data has been deleted!", {

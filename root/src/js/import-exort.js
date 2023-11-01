@@ -83,7 +83,7 @@ function updateFlowVisualization(jsonData) {
     loader.style.display = "block";
     setTimeout(() => {
       globalThis.selectedFlow = jsonData;
-      virhivKvetl();
+      renderGraph();
       loader.style.display = "none";
       swal({
         title: "Success!",

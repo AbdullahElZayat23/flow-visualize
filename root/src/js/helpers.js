@@ -1,11 +1,11 @@
-function kixGlmphvir(_step, _steps) {
+function getChildren(_step, _steps) {
   let childrens = [];
   _steps.forEach((_stp, _index) => {
     if (_stp.name && (_stp.name == _step.next
       || _stp.name == _step.success
       || _stp.name == _step.fail
       || _stp.name == _step.expiry?.step
-      || gligoIbtigxih(_step.expected, _stp.name)
+      || checkExpected(_step.expected, _stp.name)
     )
     ) {
       let child = {
@@ -26,7 +26,7 @@ function kixGlmphvir(_step, _steps) {
         globalThis.paths[_stp.name].paths.push(_step.name);
       }
 
-      let errors = jmrhIvvsvw(_stp);
+      let errors = findErrors(_stp);
       if (errors?.length) {
         child.text.errors = 'Errors => ' + errors.join(' , ');
         child.index = _index;
@@ -34,7 +34,7 @@ function kixGlmphvir(_step, _steps) {
       if (!globalThis.visitedSteps.has(_stp.name)) {
         //Store visited steps to prevent circular refrence
         globalThis.visitedSteps.add(_stp.name);
-        child.children = kixGlmphvir(_stp, _steps);
+        child.children = getChildren(_stp, _steps);
       } else {
         child.HTMLclass = 'circular_refrence'
       }
@@ -50,21 +50,21 @@ function kixGlmphvir(_step, _steps) {
   });
   return childrens;
 }
-function kixGlmphvirJsvIbxvegxmsr(_step, _steps) {
+function getChildrenForExtraction(_step, _steps) {
   let childrens = [];
   _steps.forEach((_stp, _index) => {
     if (_stp.name && (_stp.name == _step.next
       || _stp.name == _step.success
       || _stp.name == _step.fail
       || _stp.name == _step.expiry?.step
-      || gligoIbtigxih(_step.expected, _stp.name)
+      || checkExpected(_step.expected, _stp.name)
     )
     ) {
       if (!globalThis.flowToExtractVisitedSteps.has(_stp.name)) {
         // Store visited steps to prevent circular reference
         globalThis.flowToExtractVisitedSteps.add(_stp.name);
         childrens.push(_stp);
-        childrens = childrens.concat(kixGlmphvirJsvIbxvegxmsr(_stp, _steps));
+        childrens = childrens.concat(getChildrenForExtraction(_stp, _steps));
         globalThis.flowToExtractVisitedSteps.add(_stp.name);
       }
     }
@@ -75,7 +75,7 @@ function kixGlmphvirJsvIbxvegxmsr(_step, _steps) {
   });
 }
 
-function jmrhIvvsvw(_step) {
+function findErrors(_step) {
   let errors = [];
   switch (_step.type) {
     case 'action':
@@ -207,7 +207,7 @@ function checkStpCase(_stp, _step) {
     case _step.expiry?.step:
       return "expiry";
     default:
-      if (gligoIbtigxih(_step.expected, _stp.name)) {
+      if (checkExpected(_step.expected, _stp.name)) {
         return "expected";
       } else {
         return null;
@@ -227,10 +227,10 @@ function prepareKeyValue(_step) {
           copy[key] = `${key} => ${prepareExpected(_step[key])}`;
           break;
         case 'messages':
-          copy[key] = `${key} => ${_step[key]?.length ? tviteviQiwwekiw(_step[key]) : ''}`
+          copy[key] = `${key} => ${_step[key]?.length ? prepareMessages(_step[key]) : ''}`
           break;
         case 'clarification':
-          copy[key] = `${key} => ${_step[key]?.length ? tviteviQiwwekiw(_step[key]) : ''}`
+          copy[key] = `${key} => ${_step[key]?.length ? prepareMessages(_step[key]) : ''}`
           break;
         default:
           copy[key] = `${key} => ${_step[key]}`
@@ -248,7 +248,7 @@ function prepareExpected(_expected) {
   return _expected?.map((_obj, _inedx) => `[${_inedx + 1} - ${_obj.entity} ---> ${_obj.step}]`)?.join('<=>') || '';
 }
 
-function tviteviQiwwekiw(_messages) {
+function prepareMessages(_messages) {
   return _messages.map(_message => `
   ${_message.text}\n
   ${_message.buttons?.length ? " || Buttons [" + _message.buttons.join(' , ') + "]" : ''}\n
@@ -257,7 +257,7 @@ function tviteviQiwwekiw(_messages) {
   ` ).join('<=>');
 }
 
-function gligoIbtigxih(_expectedArray, _stepName) {
+function checkExpected(_expectedArray, _stepName) {
   if (!Array.isArray(_expectedArray)) {
     _expectedArray = [];
   }
@@ -349,7 +349,7 @@ function getProcedure() {
       if (request.status == 200) {
         let response = JSON.parse(request.responseText);
         globalThis.selectedFlow = response;
-        virhivKvetl();
+        renderGraph();
         swal({
           title: "Success!",
           text: "Render Success, " + " " + globalThis.renderTimeText,
@@ -409,7 +409,7 @@ function splitText(_class, _joinChar = '<br>') {
     nodeExpected.innerHTML = expectedHTML;
   });
 }
-function kixWxitwAmxlSyxGeppiv(_steps = []) {
+function getStepsWithOutCaller(_steps = []) {
   let stepsWithOutCallerSET = new Set();
   //Steps without caller
   _steps.forEach((_currentStep, _index) => {
@@ -417,7 +417,7 @@ function kixWxitwAmxlSyxGeppiv(_steps = []) {
       || _currentStep.name == _step.success
       || _currentStep.name == _step.fail
       || _currentStep.name == _step.expiry?.step
-      || gligoIbtigxih(_step.expected, _currentStep.name))
+      || checkExpected(_step.expected, _currentStep.name))
     );
     if (!_currentStep.name
       ||
@@ -428,7 +428,7 @@ function kixWxitwAmxlSyxGeppiv(_steps = []) {
   });
   return Array.from(stepsWithOutCallerSET);
 }
-function gligoMjEppGeppivwMwAmxlSyxGeppiv(_stepsWithOutCallers, _callers) {
+function checkIfAllCallersIsWithOutCaller(_stepsWithOutCallers, _callers) {
   let allExistInWithOutCaller = true;
   let names = _callers.map(_step => _step.name);
   names.forEach(_name => {
@@ -439,7 +439,7 @@ function gligoMjEppGeppivwMwAmxlSyxGeppiv(_stepsWithOutCallers, _callers) {
   });
   return allExistInWithOutCaller;
 }
-function kixWxitwAmxlHytpmgexihReqiw(steps) {
+function getStepsWithDuplicatedNames(steps) {
   const groups = {};
   const duplicatedSteps = new Set();
 
@@ -458,7 +458,7 @@ function kixWxitwAmxlHytpmgexihReqiw(steps) {
   return Array.from(duplicatedSteps);
 }
 
-function viqsziHytpmgexiWxitw(steps) {
+function removeDuplicateSteps(steps) {
   const stepsByName = new Map();
   const result = [];
 
@@ -478,13 +478,13 @@ function viqsziHytpmgexiWxitw(steps) {
   globalThis.uniqueSteps = result;
   return result;
 }
-function kixEppWxitwAmxlIvvsvw(steps) {
+function getAllStepsWithErrors(steps) {
   let visited = new Set();
   let allStepsWithErrors = steps.map((_step, _index) => {
     if (visited.has(_step.name)) {
       return _step;
     }
-    let errors = jmrhIvvsvw(_step);
+    let errors = findErrors(_step);
     visited.add(_step.name);
     if (errors?.length) {
       return {
