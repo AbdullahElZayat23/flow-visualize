@@ -1,43 +1,38 @@
-// // Get the element with ID "flow-visualize"
-// const basicExample = document.getElementById('flow-visualize');
+var zoomLevelPercentage = 100; // Initial zoom level
 
-// // Get the current scale factor of the element
-// let currentScaleFactor = 1;
+function zoomIn() {
+  zoomLevelPercentage += 25; // Increment the zoom level by 25%
+  applyZoom();
+}
 
-// // Zoom In method
-// function zoomIn() {
-//   currentScaleFactor += 0.1;
-//   basicExample.style.setProperty('--scale-factor', currentScaleFactor);
-//   basicExample.classList.add('zoom-in');
-//   basicExample.classList.remove('zoom-out');
-// }
-
-// // Zoom Out method
-// function zoomOut() {
-//   currentScaleFactor -= 0.1;
-//   basicExample.style.setProperty('--scale-factor', currentScaleFactor);
-//   basicExample.classList.add('zoom-out');
-//   basicExample.classList.remove('zoom-in');
-// }
-
-// const chart = document.getElementById('flow-visualize');
-// const panzoomInctance = panzoom(chart, {
-//   zoomSpeed: 0.1, // adjust as needed
-//   maxZoom: 2, // adjust as needed
-//   minZoom: 0.5, // adjust as needed
-//   smoothScroll: false, // adjust as needed
-//   bounds: true, // adjust as needed
-//   initialZoom: 1, // adjust as needed
-// });
-// zoom in and out with zoom buttons
-// const zoomInButton = document.getElementById('zoom-in-icon');
-// zoomInButton.addEventListener('click', function () {
-//   panzoomInctance.zoomTo(0, 0, 2);
-// });
-
-// const zoomOutButton = document.getElementById('zoom-out-icon');
-// zoomOutButton.addEventListener('click', function () {
-//   panzoomInctance.zoomTo(0, 0, 2);
-// });
+function zoomOut() {
+  if (zoomLevelPercentage > 25) {
+    zoomLevelPercentage -= 25; // Decrement the zoom level by 25% if it's greater than 25%
+  } else if (zoomLevelPercentage > 5) {
+    zoomLevelPercentage -= 5; // Decrement the zoom level by 5% if it's greater than 5%
+  } else {
+    zoomLevelPercentage = 5; // Set the zoom level to the minimum value of 5%
+  }
+  applyZoom();
+}
 
 
+function resetZoom() {
+  zoomLevelPercentage = 100;
+  applyZoom();
+}
+
+function applyZoom() {
+  let chartContainer = document.querySelector(".chart");
+  // Calculate the scroll position ratios
+  let scrollTopRatio = chartContainer.scrollTop / chartContainer.scrollHeight;
+  let scrollLeftRatio = chartContainer.scrollLeft / chartContainer.scrollWidth;
+
+
+  document.querySelectorAll(".chart > *").forEach(node => {
+    node.style.zoom = `${zoomLevelPercentage}%`;
+  });
+
+  chartContainer.scrollTop = scrollTopRatio * chartContainer.scrollHeight;
+  chartContainer.scrollLeft = scrollLeftRatio * chartContainer.scrollWidth;
+}

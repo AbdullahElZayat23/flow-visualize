@@ -1,6 +1,6 @@
 .zoom-controls {
     position: absolute;
-    top: 10px;
+    top: 20vh;
     right: 10px;
     z-index: 1;
 }
@@ -17,11 +17,12 @@
     background-color: #fff;
     border: 1px solid #ccc;
     border-radius: 4px;
+    margin: 8%;
 }
 
 .zoom-controls i:hover {
     color: #000;
-    background-color: #f9f9f9;
+    background-color: #d85454;
 }
 #flow-visualize {
     transition: transform 0.3s ease-in-out; /* Adds a smooth transition effect */
