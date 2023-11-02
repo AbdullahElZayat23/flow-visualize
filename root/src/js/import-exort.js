@@ -104,8 +104,7 @@ function updateFlowVisualization(jsonData) {
       showFeedBack({
         title: "Success!",
         text: "Render Success, " + " " + globalThis.renderTimeText,
-        icon: "success",
-        confirmButtonText: "Ok"
+        icon: "success"
       });
       document.querySelector('.nodeExample1:last-of-type')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }, 3000);

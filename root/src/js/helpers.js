@@ -357,8 +357,7 @@ function getProcedure() {
         showFeedBack({
           title: "Success!",
           text: "Render Success, " + " " + globalThis.renderTimeText,
-          icon: "success",
-          button: "Ok",
+          icon: "success"
         });
         document.querySelector('.nodeExample1:last-of-type')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
       } else {
