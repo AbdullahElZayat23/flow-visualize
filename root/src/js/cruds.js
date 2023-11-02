@@ -1,33 +1,38 @@
 function deleteStepsWithoutCaller() {
-    swal({
+    Swal.fire({
         title: "Are you sure?",
         text: "Once deleted, you will not be able to recover this data!",
         icon: "warning",
-        buttons: true,
-        dangerMode: true,
+        showCancelButton: true,
+        confirmButtonText: "Yes, delete it!",
+        cancelButtonText: "No, cancel!",
+        reverseButtons: true,
     })
-        .then((willDelete) => {
-            if (willDelete) {
-                globalThis.selectedFlow.steps = globalThis?.selectedFlow?.steps.filter(step =>
-                    !globalThis.stepsWithoutCaller.find(_step => _step.name == step.name)
+        .then((result) => {
+            if (result.isConfirmed) {
+                const uniqueSteps = globalThis.selectedFlow.steps.filter((step, index, self) =>
+                    index === self.findIndex((s) => (
+                        s.name === step.name
+                    ))
                 );
-                deleteProcessEffect();
-            } else {
-                // User clicked the "Cancel" button
-                swal("Your data is safe!");
+                globalThis.selectedFlow.steps = uniqueSteps;
+                deleteProcessEffect();                
+            } else if (result.dismiss === Swal.DismissReason.cancel) {
+                Swal.fire("Cancelled", "Your data is safe!", "error");
             }
-        });
+        });    
 }
 function deleteDuplicatedSteps() {
-    swal({
+    Swal.fire({
         title: "Are you sure?",
         text: "Once deleted, you will not be able to recover this data!",
         icon: "warning",
-        buttons: true,
-        dangerMode: true,
+        showCancelButton: true,
+        confirmButtonText: "Yes, delete it!",
+        cancelButtonText: "No, cancel",        
     })
-        .then((willDelete) => {
-            if (willDelete) {
+        .then((result) => {
+            if (result.isConfirmed) {
                 const uniqueSteps = globalThis.selectedFlow.steps.filter((step, index, self) =>
                     index === self.findIndex((s) => (
                         s.name === step.name
@@ -35,9 +40,8 @@ function deleteDuplicatedSteps() {
                 );
                 globalThis.selectedFlow.steps = uniqueSteps;
                 deleteProcessEffect();
-            } else {
-                // User clicked the "Cancel" button
-                swal("Your data is safe!");
+            } else if (result.dismiss === Swal.DismissReason.cancel || result.dismiss === Swal.DismissReason.backdrop) {
+                Swal.fire("Cancelled", "Your data is safe!", "error");
             }
         });
 }
@@ -49,9 +53,7 @@ function deleteProcessEffect() {
             renderGraph();
             loader.style.display = "none";
             // User clicked the "Delete" button
-            swal("Poof! Your data has been deleted!", {
-                icon: "success",
-            });
+            Swal.fire("Poof! Your data has been deleted!", "", "success");
         }, 3000);
     } catch (error) {
         loader.style.display = "none";

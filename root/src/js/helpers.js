@@ -264,7 +264,7 @@ function checkExpected(_expectedArray, _stepName) {
   return _expectedArray?.find(_expected => _expected?.step == _stepName)
 }
 function deleteUnwanted(_text) {
-  delete _text.aiLabels;
+  // delete _text.aiLabels;
   // delete _text.messages;
   // delete _text.clarification;
   delete _text.status;
@@ -310,7 +310,11 @@ function searchProcedures() {
         }
       }
     } else {
-      swal('Error', "Request failed", 'error');
+      Swal.fire({
+        title: "Error",
+        text: "Request failed",
+        icon: "error"
+      });      
     }
   };
   request.onerror = function () {
@@ -350,7 +354,7 @@ function getProcedure() {
         let response = JSON.parse(request.responseText);
         globalThis.selectedFlow = response;
         renderGraph();
-        swal({
+        Swal.fire({
           title: "Success!",
           text: "Render Success, " + " " + globalThis.renderTimeText,
           icon: "success",
@@ -358,10 +362,18 @@ function getProcedure() {
         });
         document.querySelector('.nodeExample1:last-of-type')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
       } else {
-        swal('Error', "Request failed", 'error');
+        Swal.fire({
+          title: "Error",
+          text: "Request failed",
+          icon: "error"
+        });        
       }
     } catch (error) {
-      swal('Error', "Render error", 'error');
+      Swal.fire({
+        title: "Error",
+        text: "Render error",
+        icon: "error"
+      });      
     } finally {
       // Hide loader 
       loader.style.display = "none";

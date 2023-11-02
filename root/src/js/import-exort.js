@@ -19,7 +19,7 @@ importFileInput.addEventListener('change', (event) => {
         // For example, update the flow visualization
         updateFlowVisualization(jsonData);
       } else {
-        swal({
+        Swal.fire({
           title: "No Steps To Render",
           text: "There are no steps to render at the moment",
           icon: "info",
@@ -28,13 +28,21 @@ importFileInput.addEventListener('change', (event) => {
 
     } catch (error) {
       // Handle errors during the JSON parsing
-      swal('Error', 'Failed to import JSON data. Please make sure the selected file contains valid / pure JSON data.', 'error');
+      Swal.fire({
+        title: "Error",
+        text: "Failed to import JSON data. Please make sure the selected file contains valid / pure JSON data.",
+        icon: "error"
+      });      
     }
     //Clear file selection
     importFileInput.value = '';
   });
   reader.onerror = function () {
-    swal('Error', 'Error While Reading The File', 'error');
+    Swal.fire({
+      title: "Error",
+      text: "Error while reading the file",
+      icon: "error"
+    });    
   }
   // Read the selected file as text
   reader.readAsText(file);
@@ -57,7 +65,7 @@ externalFlow.addEventListener('change', (event) => {
         // For example, update the flow visualization
         globalThis.uploadedFileJSOnsData = jsonData;
       } else {
-        swal({
+        Swal.fire({
           title: "No Data To Read",
           text: "There is no data to read in the selected file.",
           icon: "info",
@@ -66,13 +74,21 @@ externalFlow.addEventListener('change', (event) => {
 
     } catch (error) {
       // Handle errors during the JSON parsing
-      swal('Error', 'Failed to import JSON data. Please make sure the selected file contains valid / pure JSON data.', 'error');
+      Swal.fire({
+        title: "Error",
+        text: "Failed to import JSON data. Please make sure the selected file contains valid / pure JSON data.",
+        icon: "error"
+      });      
     }
     //Clear file selection
     externalFlow.value = '';
   });
   reader.onerror = function () {
-    swal('Error', 'Error While Reading The File', 'error');
+    Swal.fire({
+      title: "Error",
+      text: "Error while reading the file",
+      icon: "error"
+    });    
   }
   // Read the selected file as text
   reader.readAsText(file);
@@ -85,7 +101,7 @@ function updateFlowVisualization(jsonData) {
       globalThis.selectedFlow = jsonData;
       renderGraph();
       loader.style.display = "none";
-      swal({
+      Swal.fire({
         title: "Success!",
         text: "Render Success, " + " " + globalThis.renderTimeText,
         icon: "success",
@@ -94,7 +110,11 @@ function updateFlowVisualization(jsonData) {
     document.querySelector('.nodeExample1:last-of-type')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }, 3000);
   } catch (error) {
-    swal('Error', "Render Fail", 'error');
+    Swal.fire({
+      title: "Error",
+      text: "Render Fail",
+      icon: "error"
+    });    
   }
 }
 
@@ -124,14 +144,18 @@ function exportFlow(data, _options={}) {
       document.body.removeChild(link);
       URL.revokeObjectURL(url);
     } else {
-      swal({
+      Swal.fire({
         title: "No data to export",
         text: "There is no data to export at the moment.",
         icon: "info",
       });
     }
   } catch (error) {
-    swal('Error', 'Export Fail', 'error');
+    Swal.fire({
+      title: "Error",
+      text: "Export Fail",
+      icon: "error"
+    });    
   } finally {
     loader.style.display = "none";
   }

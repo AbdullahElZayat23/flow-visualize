@@ -54,11 +54,11 @@ function optionSelected(_option) {
         break;
     }
   } else {
-    swal({
+    Swal.fire({
       title: "No Steps To Filter",
-      text: "There are no steps to filter at the moment. Please redner a flow first",
-      icon: "info",
-    });
+      text: "There are no steps to filter at the moment. Please render a flow first",
+      icon: "info"
+    });   
   }
   closePopup();
 }
@@ -80,10 +80,10 @@ function extractSteps() {
   }
   closeModal();
   if (!steps.length) {
-    swal({
-      title: "No Steps Found With The Choosen Criteria",
-      text: "There are no steps With The Choosen Criteria",
-      icon: "info",
+    Swal.fire({
+      title: "No Steps Found With The Chosen Criteria",
+      text: "There are no steps with the chosen criteria",
+      icon: "info"
     });
     return;
   }
@@ -123,7 +123,7 @@ function searchStep() {
   try {
     stepsObj = globalThis.selectedFlow?.steps[stepNumber];
     if (!stepsObj) {
-      swal({
+      Swal.fire({
         title: "Step not Found",
         text: "There is no step in the tree with the index you entered, or the step has no name. Please check your inputs.",
         icon: "info",
@@ -131,7 +131,7 @@ function searchStep() {
       return;
     }
   } catch (error) {
-    swal({
+    Swal.fire({
       title: "Step not Found",
       text: "There is no step in the tree with the index you entered, or the step has no name. Please check your inputs.",
       icon: "info",
@@ -159,7 +159,7 @@ function searchStep() {
       step.style.backgroundColor = '';
     }, 4000);
   } else {
-    swal({
+    Swal.fire({
       title: "Step not Found",
       text: "There is no step in the tree with the index you entered, or the step has no name. Please check your inputs.",
       icon: "info",
@@ -198,7 +198,7 @@ function extractFlow() {
   let parentNode = globalThis.selectedFlow?.steps.find(step => step.name == selectedValue);
   closeModal();
   if (!parentNode) {
-    swal({
+    Swal.fire({
       title: "No Step Found With The Entered Name",
       text: "Make Sure Step Name Is Correct.",
       icon: "info",
@@ -219,7 +219,7 @@ function extractFlow() {
 function mergeSteps() {
   closeModal();
   if (!globalThis.uploadedFileJSOnsData?.steps?.length) {
-    swal({
+    Swal.fire({
       title: "Select Data Source",
       text: "Select Data Source To Merge From",
       icon: "info",
@@ -262,7 +262,11 @@ function addStep() {
   try {
     parsedSteps = JSON.parse(steps);
   } catch (error) {
-    swal('Error', 'Failed to parse JSON data. Please make sure the inserted step/s contains valid / pure JSON data.', 'error');
+    Swal.fire({
+      title: "Error",
+      text: "Failed to parse JSON data. Please make sure the inserted step/s contains valid / pure JSON data.",
+      icon: "error"
+    });    
     return;
   }
   if (!Array.isArray(parsedSteps)) {
@@ -288,7 +292,11 @@ function addStep() {
     showReport(duplicates.map(_step => ({
       Name: _step.name
     })), ['Name'], 'new steps', 'inserted-steps-with-duplication');
-    swal('Error', 'Inserted Steps Contains Duplication, See The Exported Sheet For The Details.', 'error');
+    Swal.fire({
+      title: "Error",
+      text: "Inserted Steps Contain Duplications. See the exported sheet for details.",
+      icon: "error"
+    });    
     return;
   }
 
@@ -298,7 +306,11 @@ function addStep() {
       Errors: _step.errors.join(', '),
     })), ['Name', 'Errors'], 'new steps', 'inserted-steps-with-errors');
 
-    swal('Error', 'Inserted Steps Contains Errors, See The Exported Sheet For The Details.', 'error');
+    Swal.fire({
+      title: "Error",
+      text: "Inserted Steps Contain Errors. See the exported sheet for details.",
+      icon: "error"
+    });    
   } else {
     let newSteps = globalThis.selectedFlow.steps.concat(parsedSteps);
     let jsonData = { ...globalThis.selectedFlow, steps: newSteps };
@@ -543,7 +555,7 @@ function openDetailsModel(data) {
   // Generate the HTML view of the object
   const htmlView = createHtmlView(data);
   // Use swal function with HTML content
-  swal({
+  Swal.fire({
     content: {
       element: 'div',
       attributes: {
@@ -645,7 +657,7 @@ function ExtractPathBetweenTwoPoints() {
         Paths: _path
       })), ['Paths'], 'paths', 'chosen-flow-paths');
     } else {
-      swal({
+      Swal.fire({
         title: "No paths between both steps to extract",
         text: "There are no paths between the selected steps, either there is no path or the order of steps chosen is wrong",
         icon: "info",
