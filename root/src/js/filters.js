@@ -10,7 +10,7 @@ function showPopup() {
 }
 
 function closePopup() {
-  popup.classList.remove("active");
+  popup?.classList.remove("active");
 }
 
 function optionSelected(_option) {
@@ -54,7 +54,7 @@ function optionSelected(_option) {
         break;
     }
   } else {
-    Swal.fire({
+    showFeedBack({
       title: "No Steps To Filter",
       text: "There are no steps to filter at the moment. Please render a flow first",
       icon: "info"
@@ -80,7 +80,7 @@ function extractSteps() {
   }
   closeModal();
   if (!steps.length) {
-    Swal.fire({
+    showFeedBack({
       title: "No Steps Found With The Chosen Criteria",
       text: "There are no steps with the chosen criteria",
       icon: "info"
@@ -96,7 +96,7 @@ function showModal() {
 }
 function closeModal() {
   let moreModal = document.getElementById('moreModal');
-  moreModal.classList.remove("active");
+  moreModal?.classList.remove("active");
 }
 
 function showReport(data, _tableHeaders, _flowName, _fileName) {
@@ -123,7 +123,7 @@ function searchStep() {
   try {
     stepsObj = globalThis.selectedFlow?.steps[stepNumber];
     if (!stepsObj) {
-      Swal.fire({
+      showFeedBack({
         title: "Step not Found",
         text: "There is no step in the tree with the index you entered, or the step has no name. Please check your inputs.",
         icon: "info",
@@ -131,7 +131,7 @@ function searchStep() {
       return;
     }
   } catch (error) {
-    Swal.fire({
+    showFeedBack({
       title: "Step not Found",
       text: "There is no step in the tree with the index you entered, or the step has no name. Please check your inputs.",
       icon: "info",
@@ -159,7 +159,7 @@ function searchStep() {
       step.style.backgroundColor = '';
     }, 4000);
   } else {
-    Swal.fire({
+    showFeedBack({
       title: "Step not Found",
       text: "There is no step in the tree with the index you entered, or the step has no name. Please check your inputs.",
       icon: "info",
@@ -198,7 +198,7 @@ function extractFlow() {
   let parentNode = globalThis.selectedFlow?.steps.find(step => step.name == selectedValue);
   closeModal();
   if (!parentNode) {
-    Swal.fire({
+    showFeedBack({
       title: "No Step Found With The Entered Name",
       text: "Make Sure Step Name Is Correct.",
       icon: "info",
@@ -219,7 +219,7 @@ function extractFlow() {
 function mergeSteps() {
   closeModal();
   if (!globalThis.uploadedFileJSOnsData?.steps?.length) {
-    Swal.fire({
+    showFeedBack({
       title: "Select Data Source",
       text: "Select Data Source To Merge From",
       icon: "info",
@@ -262,7 +262,7 @@ function addStep() {
   try {
     parsedSteps = JSON.parse(steps);
   } catch (error) {
-    Swal.fire({
+    showFeedBack({
       title: "Error",
       text: "Failed to parse JSON data. Please make sure the inserted step/s contains valid / pure JSON data.",
       icon: "error"
@@ -292,7 +292,7 @@ function addStep() {
     showReport(duplicates.map(_step => ({
       Name: _step.name
     })), ['Name'], 'new steps', 'inserted-steps-with-duplication');
-    Swal.fire({
+    showFeedBack({
       title: "Error",
       text: "Inserted Steps Contain Duplications. See the exported sheet for details.",
       icon: "error"
@@ -306,7 +306,7 @@ function addStep() {
       Errors: _step.errors.join(', '),
     })), ['Name', 'Errors'], 'new steps', 'inserted-steps-with-errors');
 
-    Swal.fire({
+    showFeedBack({
       title: "Error",
       text: "Inserted Steps Contain Errors. See the exported sheet for details.",
       icon: "error"
@@ -555,7 +555,7 @@ function openDetailsModel(data) {
   // Generate the HTML view of the object
   const htmlView = createHtmlView(data);
   // Use swal function with HTML content
-  Swal.fire({
+  showFeedBack({
     content: {
       element: 'div',
       attributes: {
@@ -657,7 +657,7 @@ function ExtractPathBetweenTwoPoints() {
         Paths: _path
       })), ['Paths'], 'paths', 'chosen-flow-paths');
     } else {
-      Swal.fire({
+      showFeedBack({
         title: "No paths between both steps to extract",
         text: "There are no paths between the selected steps, either there is no path or the order of steps chosen is wrong",
         icon: "info",

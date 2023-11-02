@@ -310,7 +310,7 @@ function searchProcedures() {
         }
       }
     } else {
-      Swal.fire({
+      showFeedBack({
         title: "Error",
         text: "Request failed",
         icon: "error"
@@ -354,7 +354,7 @@ function getProcedure() {
         let response = JSON.parse(request.responseText);
         globalThis.selectedFlow = response;
         renderGraph();
-        Swal.fire({
+        showFeedBack({
           title: "Success!",
           text: "Render Success, " + " " + globalThis.renderTimeText,
           icon: "success",
@@ -362,14 +362,14 @@ function getProcedure() {
         });
         document.querySelector('.nodeExample1:last-of-type')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
       } else {
-        Swal.fire({
+        showFeedBack({
           title: "Error",
           text: "Request failed",
           icon: "error"
         });        
       }
     } catch (error) {
-      Swal.fire({
+      showFeedBack({
         title: "Error",
         text: "Render error",
         icon: "error"
@@ -588,6 +588,34 @@ function updateValues() {
   updateSpanValue('allStepsWithErrors', allStepsWithErrorsLength);
   updateSpanValue('stepsWithoutCaller', stepsWithoutCallerLength);
   updateSpanValue('duplicatedSteps', duplicatedStepsLength);
+}
+async function takeUserInput(options) {
+  closeModal();
+  closePopup();
+  return await Swal.fire({
+    title: options.title,
+    input: options.input,
+    inputAttributes: options.inputAttributes,
+    showCancelButton: options.showCancelButton || true,
+    confirmButtonText: options.confirmButtonText || "Confirm",
+    allowOutsideClick: options.allowOutsideClick || false,
+    ...options
+  });
+}
+function showFeedBack(options) {
+  closeModal();
+  closePopup();
+  let _literalOptions;
+  if (typeof options == "string" && arguments.length == 3) {
+    _literalOptions = {
+      title: arguments[0],
+      text: arguments[1],
+      icon: arguments[2]
+    }    
+  } else {
+    _literalOptions = options; 
+  }
+  Swal.fire(_literalOptions);
 }
 
 
