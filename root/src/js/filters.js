@@ -528,6 +528,13 @@ function deepSearch(keyword) {
           matches.push({ value: step[field]?.step, field, step })
       }
 
+      if (field == 'labels') {
+        step[field]?.forEach(label => {
+          if (label?.toLowerCase()?.includes(keyword))
+            matches.push({ value: label, field, step })
+        });
+      }
+
     }
   });
   return matches;
