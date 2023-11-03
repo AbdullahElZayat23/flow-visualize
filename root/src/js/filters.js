@@ -556,14 +556,8 @@ function openDetailsModel(data) {
   const htmlView = createHtmlView(data);
   // Use swal function with HTML content
   showFeedBack({
-    content: {
-      element: 'div',
-      attributes: {
-        innerHTML: htmlView
-      }
-    },
-    className: 'custom-swal-content',
-    width: 'fit-content'
+    html: '<div>' + htmlView + '</div>',
+    customClass: 'custom-swal-content',
   });
 }
 
