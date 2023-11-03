@@ -19,7 +19,7 @@ function getChildren(_step, _steps) {
         globalThis.paths[_stp.name].paths.push(_step.name);
       } else {
 
-        globalThis.paths[_stp.name] = {         
+        globalThis.paths[_stp.name] = {
           paths: []
         };
 
@@ -253,7 +253,7 @@ function prepareMessages(_messages) {
   ${_message.text}\n
   ${_message.buttons?.length ? " || Buttons [" + _message.buttons.join(' , ') + "]" : ''}\n
   ${_message.options?.length ? " || Options (header => " + _message.header.text + ") [" + _message.options.join(' , ') + "]" : ''}\n
-  ${_message.attachement ? " Attachment => " + _message.attachement : ''}\n
+  ${_message.attachement ? " || Attachment => " + _message.attachement : ''}\n
   ` ).join('<=>');
 }
 
@@ -290,7 +290,7 @@ function searchProcedures() {
   if (Instance.endsWith("/")) {
     Instance = Instance.slice(0, -1);
   }
-  
+
   const request = new XMLHttpRequest();
   request.open("GET", `${Instance}/api/procedure/list/1/15/${search}`);
   request.onload = function () {
@@ -314,7 +314,7 @@ function searchProcedures() {
         title: "Error",
         text: "Request failed",
         icon: "error"
-      });      
+      });
     }
   };
   request.onerror = function () {
@@ -343,7 +343,7 @@ function getProcedure() {
   loader.style.display = "block";
   let Instance = document.getElementById("urlInput").value;
   const request = new XMLHttpRequest();
-  
+
   if (Instance.endsWith("/")) {
     Instance = Instance.slice(0, -1);
   }
@@ -365,14 +365,14 @@ function getProcedure() {
           title: "Error",
           text: "Request failed",
           icon: "error"
-        });        
+        });
       }
     } catch (error) {
       showFeedBack({
         title: "Error",
         text: "Render error",
         icon: "error"
-      });      
+      });
     } finally {
       // Hide loader 
       loader.style.display = "none";
@@ -588,33 +588,65 @@ function updateValues() {
   updateSpanValue('stepsWithoutCaller', stepsWithoutCallerLength);
   updateSpanValue('duplicatedSteps', duplicatedStepsLength);
 }
-async function takeUserInput(options) {
+function takeUserInput(options) {
   closeModal();
   closePopup();
-  return await Swal.fire({
-    title: options.title,
-    input: options.input,
-    inputAttributes: options.inputAttributes,
-    showCancelButton: options.showCancelButton || true,
-    confirmButtonText: options.confirmButtonText || "Confirm",
-    allowOutsideClick: options.allowOutsideClick || false,
-    ...options
+  Swal.close();
+  return new Promise((resolve, reject) => {
+    let userInputOptions = {
+      title: options.title,
+      input: options.input,
+      inputAttributes: options.inputAttributes,
+      showCancelButton: options.showCancelButton || true,
+      confirmButtonText: options.confirmButtonText || "Confirm",
+      allowOutsideClick: options.allowOutsideClick || false,
+      ...options
+    }
+    Swal.fire(userInputOptions).then((result) => resolve(result)).catch(err => reject(err));
   });
 }
 function showFeedBack(options) {
   closeModal();
   closePopup();
-  let _literalOptions;
-  if (typeof options == "string" && arguments.length == 3) {
-    _literalOptions = {
-      title: arguments[0],
-      text: arguments[1],
-      icon: arguments[2]
-    }    
-  } else {
-    _literalOptions = options; 
-  }
-  Swal.fire(_literalOptions);
+  Swal.close();
+  return new Promise((resolve, reject) => {
+    let _literalOptions;
+    if (typeof options == "string" && arguments.length == 3) {
+      _literalOptions = {
+        title: arguments[0],
+        text: arguments[1],
+        icon: arguments[2]
+      }
+    } else {
+      _literalOptions = options;
+    }
+    Swal.fire(_literalOptions).then((result) => resolve(result)).catch(err => reject(err));
+  });
+}
+function flattenRecursively(arr) {
+  return arr.reduce((acc, val) => {
+    if (Array.isArray(val)) {
+      acc.push(...flattenRecursively(val));
+    } else {
+      acc.push(val);
+    }
+    return acc;
+  }, []);
+}
+function intersectionByName(arr1, arr2) {
+  return arr1.filter(element1 => arr2.some(element2 => element2.name === element1.name));
+}
+function findPureWorkingSteps(inSteps, outSteps, intersection) {
+  // Find the intersection of step names
+  const intersectionNames = intersection.map(step => step.name);
+
+  // Filter inSteps to get pure inSteps (not in the intersection by name)
+  const pureInSteps = inSteps.filter(step => !intersectionNames.includes(step.name));
+
+  // Filter outSteps to get pure outSteps (not in the intersection by name)
+  const pureOutSteps = outSteps.filter(step => !intersectionNames.includes(step.name));
+
+  return { pureInSteps, pureOutSteps };
 }
 
 
