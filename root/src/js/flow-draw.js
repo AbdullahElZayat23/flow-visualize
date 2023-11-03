@@ -28,14 +28,15 @@ async function drawFlow() {
 
         if (result.value) {
             names = result.value.split('\n');
+            names = [...new Set(names)];
             const steps = globalThis?.selectedFlow?.steps;
             const nonExistSteps = names.filter(_name => !steps.find(_step => _step.name == _name));
             if (nonExistSteps.length) {
-               await showFeedBack({
+                await showFeedBack({
                     title: "Rejected",
                     text: `Some of the steps you provided do not exist in the flow, re-check their names. [${nonExistSteps.join(" , ")}]`,
                     icon: "error"
-               });
+                });
                 return;
             }
         }
@@ -294,13 +295,44 @@ function checkValidChild(_stp, _step) {
 }
 
 async function drawWorkingHoursFlow() {
+    let namesToInclude = [];
+    let steps = globalThis.uniqueSteps;
+    let options = {
+        title: 'Enter steps names without a caller to include e.g Templates [optional]',
+        input: "textarea",
+        inputAttributes: {
+            autocapitalize: 'off',
+            placeholder: "step name 1\nstep name 2\nstep name 3\n..."
+        },
+        showCancelButton: true,
+        confirmButtonText: "Continue",
+        allowOutsideClick: false
+    }
+    let result = await takeUserInput(options);
+
+    if (!result.isConfirmed)
+        return;
+
+    if (result.value) {
+        namesToInclude = result.value.split('\n');
+        namesToInclude = [...new Set(namesToInclude)];
+        const nonExistSteps = namesToInclude.filter(_name => !steps.find(_step => _step.name == _name));
+        if (nonExistSteps.length) {
+            await showFeedBack({
+                title: "Rejected",
+                text: `Some of the steps you provided do not exist in the flow, re-check their names. [${nonExistSteps.join(" , ")}]`,
+                icon: "error"
+            });
+            return;
+        }
+    }
     // 1-Ask for actions names.
     let names = await askForActionNames();
     if (typeof names == "undefined")
         return;
     // 2-extract wokring hours checkers
     names = names.length ? names.split("\n") : []
-    let stepNames = extractWorkingHoursCheckers(globalThis.uniqueSteps, names);
+    let stepNames = extractWorkingHoursCheckers(steps, names);
     if (!stepNames.length) {
         let options = {
             title: 'Rejected',
@@ -311,10 +343,9 @@ async function drawWorkingHoursFlow() {
         return;
     }
     // 3-Prompt to select if (in/out of working) hours path.
-    let stepsDirectionRefrence = await setWorkingHoursActionsResultsDirection(stepNames, globalThis.uniqueSteps);
+    let stepsDirectionRefrence = await setWorkingHoursActionsResultsDirection(stepNames, steps);
     // 4-Invoke the children finder method
     let inWorkingSteps = [], outOfWorkingSteps = [];
-    let steps = globalThis.uniqueSteps;
     let startStep = steps.find(_step => _step.isEntryPoint) || steps[0];
     globalThis.workingTracePaths = {};
     globalThis.visitedWorkingTraceSteps = new Set();
@@ -345,9 +376,17 @@ async function drawWorkingHoursFlow() {
     }
 
     getValidChildrensBasedOnWorkinghours(startStep, steps, inWorkingSteps, outOfWorkingSteps, initalDirection.value, stepsDirectionRefrence);
-    // 5-Draw in working and out of working flows   
+    //Iterate over steps without a caller if any
+    if (namesToInclude.length) {
+        for (const name of namesToInclude) {
+            const step = steps.find(_step => _step.name === name);
+            getValidChildrensBasedOnWorkinghours(step, steps, inWorkingSteps, outOfWorkingSteps, null, stepsDirectionRefrence);
+        }
+    }
+
     let inAndOutIntersection = intersectionByName(inWorkingSteps, outOfWorkingSteps);
     let { pureInSteps, pureOutSteps } = findPureWorkingSteps(inWorkingSteps, outOfWorkingSteps, inAndOutIntersection);
+    //Export final results
     exportFlow({ inWorkingSteps, outOfWorkingSteps, inAndOutIntersection, pureInSteps, pureOutSteps, name: "in-out-workingStepsDirections" });
 }
 function extractWorkingHoursCheckers(steps = [], actions = []) {
@@ -454,8 +493,6 @@ function getValidChildrensBasedOnWorkinghours(_step, _steps, inWorkingSteps, out
                 globalThis.visitedWorkingTraceSteps.add(child.name);
                 getValidChildrensBasedOnWorkinghours(child, _steps, inWorkingSteps, outOfWorkingSteps, parentDirection, stepsDirectionRefrence);
             }
-
-            globalThis.visitedWorkingTraceSteps.add(child.name);
         }
     });
 }
