@@ -26,10 +26,19 @@ async function drawFlow() {
         if (!result.isConfirmed)
             return;
 
-        //TODO validate names provided to check if it belongs to the current flow
-
-        if (result.value)
+        if (result.value) {
             names = result.value.split('\n');
+            const steps = globalThis?.selectedFlow?.steps;
+            const nonExistSteps = names.filter(_name => !steps.find(_step => _step.name == _name));
+            if (nonExistSteps.length) {
+               await showFeedBack({
+                    title: "Rejected",
+                    text: `Some of the steps you provided do not exist in the flow, re-check their names. [${nonExistSteps.join(" , ")}]`,
+                    icon: "error"
+               });
+                return;
+            }
+        }
 
         loader.style.display = "block";
         setTimeout(() => {
@@ -321,7 +330,7 @@ async function drawWorkingHoursFlow() {
         cancelButtonText: 'Skip'
     };
     let initalDirection = await takeUserInput(initalDirectionOptions);
-    
+
     switch (initalDirection.value) {
         case 'inWorking':
             pushObjIfNotExists(inWorkingSteps, startStep, "name");
