@@ -111,5 +111,9 @@ body { background: #fff; }
   .node-caller{
     background-color: greenyellow;
   }
+
+  .node-labels{
+    overflow-wrap: anywhere;
+  }
   
   
