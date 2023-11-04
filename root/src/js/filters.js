@@ -670,9 +670,9 @@ function ExtractPathBetweenTwoPoints() {
 function findAllPathsBetweenTwoPoints(start, end, graph) {
   const visited = new Set();
   const path = [];
-  const allPaths = [];
+  const allPaths = new Set();
   findSimplePaths(graph, start, end, visited, path, allPaths);
-  return allPaths;
+  return [...allPaths];
 }
 
 function findSimplePaths(graph, source, destination, visited, path, allPaths) {
@@ -681,8 +681,8 @@ function findSimplePaths(graph, source, destination, visited, path, allPaths) {
 
   if (source === destination) {
     const pathWithLinks = path.map(step => step.linkType ? `${step.node} => ${step.linkType}` : step.node);
-    allPaths.push(pathWithLinks.join(' => '));
-    console.log(pathWithLinks.join(' => '));
+    allPaths.add(pathWithLinks.join(' => '));
+    // console.log(pathWithLinks.join(' => '));
   } else {
     const currentNode = graph.find(node => node.name === source);
 
