@@ -348,7 +348,8 @@ async function drawWorkingHoursFlow() {
     let inWorkingSteps = [], outOfWorkingSteps = [];
     let startStep = steps.find(_step => _step.isEntryPoint) || steps[0];
     globalThis.workingTracePaths = {};
-    globalThis.visitedWorkingTraceSteps = new Set();
+    globalThis.visitedInWorkingTraceSteps = new Set();
+    globalThis.visitedOutOfWorkingTraceSteps = new Set();
     //Set inital direction if needed
     let initalDirectionOptions = {
         title: 'Select inital direction [optional]',
@@ -489,8 +490,15 @@ function getValidChildrensBasedOnWorkinghours(_step, _steps, inWorkingSteps, out
                 }
             }
 
-            if (!globalThis.visitedWorkingTraceSteps.has(child.name)) {
-                globalThis.visitedWorkingTraceSteps.add(child.name);
+            if (parentDirection == "inWorking" && !globalThis.visitedInWorkingTraceSteps.has(child.name)) {
+                globalThis.visitedInWorkingTraceSteps.add(child.name);
+                getValidChildrensBasedOnWorkinghours(child, _steps, inWorkingSteps, outOfWorkingSteps, parentDirection, stepsDirectionRefrence);
+            } else if (parentDirection == "outOfWorking" && !globalThis.visitedOutOfWorkingTraceSteps.has(child.name)) {
+                globalThis.visitedOutOfWorkingTraceSteps.add(child.name);
+                getValidChildrensBasedOnWorkinghours(child, _steps, inWorkingSteps, outOfWorkingSteps, parentDirection, stepsDirectionRefrence);
+            } else if (!parentDirection && !globalThis.visitedInWorkingTraceSteps.has(child.name) && !globalThis.visitedOutOfWorkingTraceSteps.has(child.name)) {
+                globalThis.visitedInWorkingTraceSteps.add(child.name);
+                globalThis.visitedOutOfWorkingTraceSteps.add(child.name);
                 getValidChildrensBasedOnWorkinghours(child, _steps, inWorkingSteps, outOfWorkingSteps, parentDirection, stepsDirectionRefrence);
             }
         }
