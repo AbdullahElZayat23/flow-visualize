@@ -95,7 +95,7 @@ function getValidChildren(_step, _steps) {
                 globalThis.visitedSteps.add(_stp.name);
                 child.children = getValidChildren(_stp, _steps);
             } else {
-                child.HTMLclass = 'circular_refrence'
+                child.HTMLclass = 'circular_reference'
             }
             //Store steps with errors
             if (errors?.length && !globalThis.stepsWithErrors?.find(_exist => _exist.text?.name && _exist.text?.name == child.text?.name)) {

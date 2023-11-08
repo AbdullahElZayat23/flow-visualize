@@ -142,7 +142,7 @@ function searchStep() {
   let step = null;
   let pElements = document.querySelectorAll('.nodeExample1 p.node-name');
   for (let i = 0; i < pElements.length; i++) {
-    if (pElements[i].textContent.trim() === `name => ${stepsObj?.name}` && ![...pElements[i].parentNode.classList].includes('circular_refrence')) {
+    if (pElements[i].textContent.trim() === `name => ${stepsObj?.name}` && ![...pElements[i].parentNode.classList].includes('circular_reference')) {
       step = pElements[i].parentNode;
       break;
     }
