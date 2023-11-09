@@ -662,7 +662,7 @@ function storeValidFields(_step) {
       valids.add("fail");
   }
 
-  if (_step.expiry?.step) {
+  if (_step.expiry?.step && !["end"].includes(_step.type)) {
       valids.add("expiry.step");
   }
 
