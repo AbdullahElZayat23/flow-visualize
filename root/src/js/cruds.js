@@ -9,12 +9,9 @@ function deleteStepsWithoutCaller() {
         reverseButtons: true,
     }).then((result) => {
         if (result.isConfirmed) {
-            const uniqueSteps = globalThis.selectedFlow.steps.filter((step, index, self) =>
-                index === self.findIndex((s) => (
-                    s.name === step.name
-                ))
+            globalThis.selectedFlow.steps = globalThis?.selectedFlow?.steps.filter(step =>
+                !globalThis.stepsWithoutCaller.find(_step => _step.name == step.name)
             );
-            globalThis.selectedFlow.steps = uniqueSteps;
             deleteProcessEffect();
         } else if (result.dismiss === Swal.DismissReason.cancel) {
             showFeedBack("Cancelled", "Your data is safe!", "error");
