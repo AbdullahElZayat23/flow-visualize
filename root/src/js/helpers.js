@@ -105,6 +105,10 @@ function findErrors(_step) {
       errors.push('Missing Expiry Seconds');
   }
 
+  let invalidRepeat = typeof _step.repeat != "number";
+  if (invalidRepeat)
+    errors.push('Invalid repeat (expected a number)');
+
   return errors;
 }
 function checkFailOver(_step) {
