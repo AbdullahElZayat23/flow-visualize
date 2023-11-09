@@ -648,6 +648,91 @@ function findPureWorkingSteps(inSteps, outSteps, intersection) {
 
   return { pureInSteps, pureOutSteps };
 }
+function storeValidFields(_step) {
+  let valids = new Set();
+  if (!_step.name) {
+      return null; // Return null or any other suitable value to indicate no match
+  }
+
+  if (["action", "time"].includes(_step.type)) {
+      valids.add("success");
+  }
+
+  if (["action", "time"].includes(_step.type)) {
+      valids.add("fail");
+  }
+
+  if (_step.expiry?.step) {
+      valids.add("expiry.step");
+  }
+
+  if (_step.type === "break") {
+      valids.add("next");
+  }
+
+  if (["message", "failover", "reminder"].includes(_step.type)) {
+      valids.add('expected');
+  }
+  return Array.from(valids);
+}
+
+function removeUnValidFields(_step, _validFields, _steps) {
+  // Convert the array into an object for easy and fast access
+  let validCopyObj = {};
+
+  if (_validFields?.length) {
+    _validFields.forEach(_field => {
+      validCopyObj[_field] = true;
+    });
+  }
+
+  if (_step.success && !validCopyObj["success"]) {
+    delete _step.success;
+  } else if (_step.success) {
+    const index = _steps.findIndex(_ => _.name === _step.success);
+    if (index === -1) {
+      delete _step.success;
+    }
+  }
+
+  if (_step.fail && !validCopyObj["fail"]) {
+    delete _step.fail;
+  } else if (_step.fail) {
+    const index = _steps.findIndex(_ => _.name === _step.fail);
+    if (index === -1) {
+      delete _step.fail;
+    }
+  }
+
+  if (_step.expiry?.step && !validCopyObj["expiry.step"]) {
+    delete _step.expiry;
+  } else if (_step.expiry?.step) {
+    const index = _steps.findIndex(_ => _.name === _step.expiry?.step);
+    if (index === -1) {
+      delete _step.expiry;
+    }
+  }
+
+  if (_step.next && !validCopyObj["next"]) {
+    delete _step.next;
+  } else if (_step.next) {
+    const index = _steps.findIndex(_ => _.name === _step.next);
+    if (index === -1) {
+      delete _step.next;
+    }
+  }
+
+  if (_step.expected?.length && !validCopyObj["expected"]) {
+    delete _step.expected;
+  }
+
+  if (_step.expected?.length) {
+    _step.expected = _step.expected.filter(_expected => {
+      const index = _steps.findIndex(_ => _.name === _expected.step);
+      return index !== -1;
+    });
+  }
+}
 
 
 
