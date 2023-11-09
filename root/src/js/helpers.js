@@ -732,6 +732,14 @@ function removeUnValidFields(_step, _validFields, _steps) {
       return index !== -1;
     });
   }
+
+  if (_step.messages?.length && !["message", "failover", "reminder", "break", "end"].includes(_step.type)) {
+    _step.messages = [];
+  }
+
+  if (_step.clarification?.length && !["message", "failover", "reminder", "break", "end"].includes(_step.type)) {
+    _step.clarification = [];
+  }
 }
 
 
