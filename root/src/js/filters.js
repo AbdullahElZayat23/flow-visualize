@@ -272,7 +272,7 @@ function addStep() {
   if (!Array.isArray(parsedSteps)) {
     parsedSteps = [parsedSteps];
   }
-
+//TODO:check error if added to html or not
   parsedSteps.forEach((_step, _index) => {
     let errors = findErrors(_step);
     if (errors.length) {

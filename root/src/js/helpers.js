@@ -495,7 +495,7 @@ function removeDuplicateSteps(steps) {
 }
 function getAllStepsWithErrors(steps) {
   let visited = new Set();
-  let allStepsWithErrors = steps.map((_step, _index) => {
+  let allStepsWithErrorsTemp = steps.map((_step, _index) => {
     if (visited.has(_step.name)) {
       return _step;
     }
@@ -513,7 +513,7 @@ function getAllStepsWithErrors(steps) {
     }
     return _step;
   });
-  return allStepsWithErrors.filter(_step => _step.text?.errors);
+  return allStepsWithErrorsTemp.filter(_step => _step.text?.errors);
 }
 
 function updateSpanValue(id, value) {
