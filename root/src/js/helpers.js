@@ -221,25 +221,29 @@ function checkStpCase(_stp, _step) {
 
 function prepareKeyValue(_step) {
   let copy = {};
-  for (let key in _step) {
-    if (_step[key]) {
-      switch (key) {
-        case 'expiry':
-          copy[key] = _step[key].step ? `${key} => ${_step[key].step} | (${_step[key].seconds || 'NAN'} Seconds) ` : 'No expiry step set';
-          break;
-        case 'expected':
-          copy[key] = `${key} => ${prepareExpected(_step[key])}`;
-          break;
-        case 'messages':
-          copy[key] = `${key} => ${_step[key]?.length ? prepareMessages(_step[key]) : ''}`
-          break;
-        case 'clarification':
-          copy[key] = `${key} => ${_step[key]?.length ? prepareMessages(_step[key]) : ''}`
-          break;
-        default:
-          copy[key] = `${key} => ${_step[key]}`
-          break;
-      }
+  for (let key in _step) {   
+    switch (key) {
+      case 'expiry':
+        copy[key] = _step[key]?.step ? `${key} => ${_step[key].step} | (${_step[key].seconds || 'NAN'} Seconds) ` : 'No expiry step set';
+        break;
+      case 'expected':
+        copy[key] = `${key} => ${_step[key]?.length ? prepareExpected(_step[key]) : ''}`;
+        break;
+      case 'messages':
+        copy[key] = `${key} => ${_step[key]?.length ? prepareMessages(_step[key]) : ''}`
+        break;
+      case 'clarification':
+        copy[key] = `${key} => ${_step[key]?.length ? prepareMessages(_step[key]) : ''}`
+        break;
+      case 'AllDays':
+        copy[key] = `${key} => ${_step[key] ? prepareAllDays(_step[key]) : ''}`
+        break;
+      case 'selectedDays':
+        copy[key] = `${key} => ${_step[key] ? prepareSelectedDays(_step[key]) : ''}`
+        break;
+      default:
+        copy[key] = `${key} => ${_step[key]}`
+        break;
     }
   }
   //Sort name field to the beginning
@@ -744,6 +748,17 @@ function removeUnValidFields(_step, _validFields, _steps) {
   if (_step.clarification?.length && !["message", "failover", "reminder", "break", "end"].includes(_step.type)) {
     _step.clarification = [];
   }
+}
+
+function prepareAllDays(_allDays) {
+  return _allDays.map(_ => `number:${_.number}-displayName:${_.displayName}-checked:${_.checked}`)
+}
+function prepareSelectedDays(_selectedDays) {
+  let tempArray = [];
+  for (const key in _selectedDays) {
+    tempArray.push(`${key}: ${_selectedDays[key]}`);
+  }
+  return tempArray.join(", ");
 }
 
 
