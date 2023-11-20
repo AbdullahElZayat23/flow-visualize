@@ -147,9 +147,12 @@ function renderValidGraph(_namesToInclude = []) {
         effect: '',
         expiry: ''
     }
+    let orphanedChildrens = _namesToInclude.length ? _namesToInclude : [];
+
     let merged = {
         ...step,
-        ...parentNode
+        ...parentNode,
+        orphanedChildrens
     }
 
     let parentNodeStructure = {
@@ -161,33 +164,6 @@ function renderValidGraph(_namesToInclude = []) {
         children: [
             ...getValidChildren(merged, removeDuplicateSteps(steps))
         ]
-    }
-
-    //Search for orphan childrens names
-    if (_namesToInclude.length) {
-        const stepsWithOutACallerChildrens = _namesToInclude.reduce((result, _name) => {
-            const step = globalThis.selectedFlow.steps.find(_step => _step.name === _name);
-            if (step) {
-                result[_name] = getValidChildren(step, globalThis.uniqueSteps);
-            }
-            return result;
-        }, {});
-
-        // Create a new parent node for orphaned children
-        const orphanedChildrenParent = {
-            text: {
-                name: "Orphaned Children's Parent"
-            },
-            children: [],
-        };
-
-        // Add orphaned children to the new parent
-        orphanedChildrenParent.children.push(
-            ...flattenRecursively(Object.values(stepsWithOutACallerChildrens))
-        );
-
-        // Add the new parent to the parentNodeStructure
-        parentNodeStructure.children.push(orphanedChildrenParent);
     }
 
 
@@ -297,6 +273,9 @@ function checkValidChild(_stp, _step) {
     if (checkExpected(_step.expected, _stp.name) && ["message", "failover", "reminder"].includes(_step.type))
         return true;
 
+    if (_step.orphanedChildrens?.includes(_stp.name))
+        return true;
+
     return false;
 }
 
@@ -360,6 +339,7 @@ async function drawWorkingHoursFlow() {
     // 4-Invoke the children finder method
     let inWorkingSteps = [], outOfWorkingSteps = [];
     let startStep = steps.find(_step => _step.isEntryPoint) || steps[0];
+    startStep.orphanedChildrens = namesToInclude.length ? namesToInclude : [];
     globalThis.workingTracePaths = {};
     globalThis.visitedInWorkingTraceSteps = new Set();
     globalThis.visitedOutOfWorkingTraceSteps = new Set();
@@ -390,13 +370,6 @@ async function drawWorkingHoursFlow() {
     }
 
     getValidChildrensBasedOnWorkinghours(startStep, steps, inWorkingSteps, outOfWorkingSteps, initalDirection.value, stepsDirectionRefrence);
-    //Iterate over steps without a caller if any
-    if (namesToInclude.length) {
-        for (const name of namesToInclude) {
-            const step = steps.find(_step => _step.name === name);
-            getValidChildrensBasedOnWorkinghours(step, steps, inWorkingSteps, outOfWorkingSteps, null, stepsDirectionRefrence);
-        }
-    }
 
     let inAndOutIntersection = intersectionByName(inWorkingSteps, outOfWorkingSteps);
     let { pureInSteps, pureOutSteps } = findPureWorkingSteps(inWorkingSteps, outOfWorkingSteps, inAndOutIntersection);

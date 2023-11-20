@@ -241,6 +241,9 @@ function prepareKeyValue(_step) {
       case 'selectedDays':
         copy[key] = `${key} => ${_step[key] ? prepareSelectedDays(_step[key]) : ''}`
         break;
+      case 'orphanedChildrens':
+        copy[key] = `${key} => ${_step[key] ? prepareOrphans(_step[key]) : ''}`
+        break;
       default:
         copy[key] = `${key} => ${_step[key]}`
         break;
@@ -759,6 +762,10 @@ function prepareSelectedDays(_selectedDays) {
     tempArray.push(`${key}: ${_selectedDays[key]}`);
   }
   return tempArray.join(", ");
+}
+
+function prepareOrphans(_orphans) { 
+  return _orphans.map((_orphan,_index)=>`( ${_index+1} - ${_orphan} )`).join(",\n");
 }
 
 
