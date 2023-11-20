@@ -1,119 +1,214 @@
-body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,form,fieldset,input,textarea,p,blockquote,th,td { margin:0; padding:0; }
-table { border-collapse:collapse; border-spacing:0; }
-fieldset,img { border:0; }
-address,caption,cite,code,dfn,em,strong,th,var { font-style:normal; font-weight:normal; }
-caption,th { text-align:left; }
-h1,h2,h3,h4,h5,h6 { font-size:100%; font-weight:normal; }
-q:before,q:after { content:''; }
-abbr,acronym { border:0; }
+body,
+div,
+dl,
+dt,
+dd,
+ul,
+ol,
+li,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+pre,
+form,
+fieldset,
+input,
+textarea,
+p,
+blockquote,
+th,
+td {
+  margin: 0;
+  padding: 0;
+}
 
-body { background: #fff; }
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+fieldset,
+img {
+  border: 0;
+}
+
+address,
+caption,
+cite,
+code,
+dfn,
+em,
+strong,
+th,
+var {
+  font-style: normal;
+  font-weight: normal;
+}
+
+caption,
+th {
+  text-align: left;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-size: 100%;
+  font-weight: normal;
+}
+
+q:before,
+q:after {
+  content: '';
+}
+
+abbr,
+acronym {
+  border: 0;
+}
+
+body {
+  background: #fff;
+}
+
 /* optional Container STYLES */
-.chart { height: 85vh; margin: 5px; width: 100%; }
+.chart {
+  height: 85vh;
+  margin: 5px;
+  width: 100%;
+}
+
 /* .Treant > .node {  } */
-.Treant > p { font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif; font-weight: bold; font-size: 12px; }
-.node-name { font-weight: bold;}
+.Treant>p {
+  font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+  font-weight: bold;
+  font-size: 12px;
+}
+
+.node-name {
+  font-weight: bold;
+}
+
 .nodeExample1 {
-    padding: 2px;
-    -webkit-border-radius: 3px;
-    -moz-border-radius: 3px;
-    border-radius: 3px;
-    background-color: #ffffff;
-    border: 1px solid #000;
-    width: 400px;
-    font-family: Tahoma;
-    font-size: 12px;
+  padding: 2px;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  border-radius: 3px;
+  background-color: #ffffff;
+  border: 1px solid #000;
+  width: 400px;
+  font-family: Tahoma;
+  font-size: 12px;
 }
 
 .nodeExample1 img {
-    margin-right:  10px;
+  margin-right: 10px;
 }
 
 .node-action {
-    color: blue;
-    font-weight: bold;
-  }
-  
-  .node-success {
-    color: green;
-    font-weight: bold;
-  }
-  
-  .node-fail {
-    color: red;
-    font-weight: bold;
-  }
-  
-  .node-expiry {
-    color: orange;
-    font-weight: bold;
-  }
-  
-  .node-expected {
-    color: purple;
-    font-weight: bold;
-    border-color: #000;
-    border-width: 1px;
-    border-style: dotted;
-  }
-  
-  .node-effect {
-    color: brown;
-    font-weight: bold;
-  }
-  .node-type {
-    color: rgb(241, 29, 85);
-    font-weight: bold;
-  }
+  color: blue;
+  font-weight: bold;
+}
 
-  .node-isParent{
-    text-align: center;
-    color: red;
-    font-weight: bolder;
-    text-decoration: underline;
-    font-size: large;
-  }
-  .node-flow-name{
-    text-align: center;
-    color: black;
-    font-weight: bolder;
-    border-width: 4px;
-    border-style: dashed;
-    border-color: red;    
-    font-size: large;
-  }
-  .node-messages {
-    color: crimson;
-    border-color: #000;
-    border-width: 1px;
-    border-style: dashed;
-    overflow-wrap: anywhere;
-  }
-  .node-clarification{
-    color: #102dba;
-    border-color: #000;
-    border-width: 1px;
-    border-style: dashed;
-    overflow-wrap: anywhere;
-  }
-  .node-errors{
-    background-color: red;
-  }
-  .node.nodeExample1:last-of-type {
-    background-color: lightgreen;
-  }
+.node-success {
+  color: green;
+  font-weight: bold;
+}
 
-  .circular_reference {
-    /* background-color: rgb(112, 3, 101) !important;   */
-    border-color: red !important;
-    border-width: 5px !important;  
-  }
-  .node-caller{
-    background-color: greenyellow;
-  }
+.node-fail {
+  color: red;
+  font-weight: bold;
+}
 
-  .node-labels{
-    overflow-wrap: anywhere;
-  }
-  
-  
+.node-expiry {
+  color: orange;
+  font-weight: bold;
+}
+
+.node-expected {
+  color: purple;
+  font-weight: bold;
+  border-color: #000;
+  border-width: 1px;
+  border-style: dotted;
+}
+
+.node-effect {
+  color: brown;
+  font-weight: bold;
+}
+
+.node-type {
+  color: rgb(241, 29, 85);
+  font-weight: bold;
+}
+
+.node-isParent {
+  text-align: center;
+  color: red;
+  font-weight: bolder;
+  text-decoration: underline;
+  font-size: large;
+}
+
+.node-flow-name {
+  text-align: center;
+  color: black;
+  font-weight: bolder;
+  border-width: 4px;
+  border-style: dashed;
+  border-color: red;
+  font-size: large;
+}
+
+.node-messages {
+  color: crimson;
+  border-color: #000;
+  border-width: 1px;
+  border-style: dashed;
+  overflow-wrap: anywhere;
+}
+
+.node-clarification {
+  color: #102dba;
+  border-color: #000;
+  border-width: 1px;
+  border-style: dashed;
+  overflow-wrap: anywhere;
+}
+
+.node-errors {
+  background-color: red;
+}
+
+.node.nodeExample1:last-of-type {
+  background-color: lightgreen;
+}
+
+.circular_reference {
+  /* background-color: rgb(112, 3, 101) !important;   */
+  border-color: red !important;
+  border-width: 5px !important;
+}
+
+.node-caller {
+  background-color: greenyellow;
+}
+
+.node-labels {
+  overflow-wrap: anywhere;
+}
+
+.node-isEntryPoint {
+  color: blue;
+}
+
+.node-orphanedChildrens {
+  color: orangered;
+}
