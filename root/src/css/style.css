@@ -286,7 +286,9 @@ label[for=zero-based], label[for=one-based] {
   font-family: Arial, sans-serif;
   font-size: 14px;
   text-align: left;
-  white-space: normal; /* Enable text wrapping */
+}
+.custom-swal-content .swal2-content {
+  text-align: left;
 }
 
 .custom-swal-content ul {
@@ -309,5 +311,5 @@ label[for=zero-based], label[for=one-based] {
 }
 
 .custom-swal-content .value {
-  word-wrap: break-word; /* Enable word wrapping */
+  word-wrap: break-word;
 }

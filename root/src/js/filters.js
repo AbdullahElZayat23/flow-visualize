@@ -10,7 +10,7 @@ function showPopup() {
 }
 
 function closePopup() {
-  popup.classList.remove("active");
+  popup?.classList.remove("active");
 }
 
 function optionSelected(_option) {
@@ -54,11 +54,11 @@ function optionSelected(_option) {
         break;
     }
   } else {
-    swal({
+    showFeedBack({
       title: "No Steps To Filter",
-      text: "There are no steps to filter at the moment. Please redner a flow first",
-      icon: "info",
-    });
+      text: "There are no steps to filter at the moment. Please render a flow first",
+      icon: "info"
+    });   
   }
   closePopup();
 }
@@ -80,10 +80,10 @@ function extractSteps() {
   }
   closeModal();
   if (!steps.length) {
-    swal({
-      title: "No Steps Found With The Choosen Criteria",
-      text: "There are no steps With The Choosen Criteria",
-      icon: "info",
+    showFeedBack({
+      title: "No Steps Found With The Chosen Criteria",
+      text: "There are no steps with the chosen criteria",
+      icon: "info"
     });
     return;
   }
@@ -96,7 +96,7 @@ function showModal() {
 }
 function closeModal() {
   let moreModal = document.getElementById('moreModal');
-  moreModal.classList.remove("active");
+  moreModal?.classList.remove("active");
 }
 
 function showReport(data, _tableHeaders, _flowName, _fileName) {
@@ -123,7 +123,7 @@ function searchStep() {
   try {
     stepsObj = globalThis.selectedFlow?.steps[stepNumber];
     if (!stepsObj) {
-      swal({
+      showFeedBack({
         title: "Step not Found",
         text: "There is no step in the tree with the index you entered, or the step has no name. Please check your inputs.",
         icon: "info",
@@ -131,7 +131,7 @@ function searchStep() {
       return;
     }
   } catch (error) {
-    swal({
+    showFeedBack({
       title: "Step not Found",
       text: "There is no step in the tree with the index you entered, or the step has no name. Please check your inputs.",
       icon: "info",
@@ -142,7 +142,7 @@ function searchStep() {
   let step = null;
   let pElements = document.querySelectorAll('.nodeExample1 p.node-name');
   for (let i = 0; i < pElements.length; i++) {
-    if (pElements[i].textContent.trim() === `name => ${stepsObj?.name}` && ![...pElements[i].parentNode.classList].includes('circular_refrence')) {
+    if (pElements[i].textContent.trim() === `name => ${stepsObj?.name}` && ![...pElements[i].parentNode.classList].includes('circular_reference')) {
       step = pElements[i].parentNode;
       break;
     }
@@ -159,7 +159,7 @@ function searchStep() {
       step.style.backgroundColor = '';
     }, 4000);
   } else {
-    swal({
+    showFeedBack({
       title: "Step not Found",
       text: "There is no step in the tree with the index you entered, or the step has no name. Please check your inputs.",
       icon: "info",
@@ -198,7 +198,7 @@ function extractFlow() {
   let parentNode = globalThis.selectedFlow?.steps.find(step => step.name == selectedValue);
   closeModal();
   if (!parentNode) {
-    swal({
+    showFeedBack({
       title: "No Step Found With The Entered Name",
       text: "Make Sure Step Name Is Correct.",
       icon: "info",
@@ -219,7 +219,7 @@ function extractFlow() {
 function mergeSteps() {
   closeModal();
   if (!globalThis.uploadedFileJSOnsData?.steps?.length) {
-    swal({
+    showFeedBack({
       title: "Select Data Source",
       text: "Select Data Source To Merge From",
       icon: "info",
@@ -262,13 +262,17 @@ function addStep() {
   try {
     parsedSteps = JSON.parse(steps);
   } catch (error) {
-    swal('Error', 'Failed to parse JSON data. Please make sure the inserted step/s contains valid / pure JSON data.', 'error');
+    showFeedBack({
+      title: "Error",
+      text: "Failed to parse JSON data. Please make sure the inserted step/s contains valid / pure JSON data.",
+      icon: "error"
+    });    
     return;
   }
   if (!Array.isArray(parsedSteps)) {
     parsedSteps = [parsedSteps];
   }
-
+//TODO:check error if added to html or not
   parsedSteps.forEach((_step, _index) => {
     let errors = findErrors(_step);
     if (errors.length) {
@@ -288,7 +292,11 @@ function addStep() {
     showReport(duplicates.map(_step => ({
       Name: _step.name
     })), ['Name'], 'new steps', 'inserted-steps-with-duplication');
-    swal('Error', 'Inserted Steps Contains Duplication, See The Exported Sheet For The Details.', 'error');
+    showFeedBack({
+      title: "Error",
+      text: "Inserted Steps Contain Duplications. See the exported sheet for details.",
+      icon: "error"
+    });    
     return;
   }
 
@@ -298,7 +306,11 @@ function addStep() {
       Errors: _step.errors.join(', '),
     })), ['Name', 'Errors'], 'new steps', 'inserted-steps-with-errors');
 
-    swal('Error', 'Inserted Steps Contains Errors, See The Exported Sheet For The Details.', 'error');
+    showFeedBack({
+      title: "Error",
+      text: "Inserted Steps Contain Errors. See the exported sheet for details.",
+      icon: "error"
+    });    
   } else {
     let newSteps = globalThis.selectedFlow.steps.concat(parsedSteps);
     let jsonData = { ...globalThis.selectedFlow, steps: newSteps };
@@ -516,6 +528,13 @@ function deepSearch(keyword) {
           matches.push({ value: step[field]?.step, field, step })
       }
 
+      if (field == 'labels') {
+        step[field]?.forEach(label => {
+          if (label?.toLowerCase()?.includes(keyword))
+            matches.push({ value: label, field, step })
+        });
+      }
+
     }
   });
   return matches;
@@ -543,15 +562,9 @@ function openDetailsModel(data) {
   // Generate the HTML view of the object
   const htmlView = createHtmlView(data);
   // Use swal function with HTML content
-  swal({
-    content: {
-      element: 'div',
-      attributes: {
-        innerHTML: htmlView
-      }
-    },
-    className: 'custom-swal-content',
-    width: 'fit-content'
+  showFeedBack({
+    html: '<div>' + htmlView + '</div>',
+    customClass: 'custom-swal-content',
   });
 }
 
@@ -645,7 +658,7 @@ function ExtractPathBetweenTwoPoints() {
         Paths: _path
       })), ['Paths'], 'paths', 'chosen-flow-paths');
     } else {
-      swal({
+      showFeedBack({
         title: "No paths between both steps to extract",
         text: "There are no paths between the selected steps, either there is no path or the order of steps chosen is wrong",
         icon: "info",
@@ -657,9 +670,9 @@ function ExtractPathBetweenTwoPoints() {
 function findAllPathsBetweenTwoPoints(start, end, graph) {
   const visited = new Set();
   const path = [];
-  const allPaths = [];
+  const allPaths = new Set();
   findSimplePaths(graph, start, end, visited, path, allPaths);
-  return allPaths;
+  return [...allPaths];
 }
 
 function findSimplePaths(graph, source, destination, visited, path, allPaths) {
@@ -668,8 +681,8 @@ function findSimplePaths(graph, source, destination, visited, path, allPaths) {
 
   if (source === destination) {
     const pathWithLinks = path.map(step => step.linkType ? `${step.node} => ${step.linkType}` : step.node);
-    allPaths.push(pathWithLinks.join(' => '));
-    console.log(pathWithLinks.join(' => '));
+    allPaths.add(pathWithLinks.join(' => '));
+    // console.log(pathWithLinks.join(' => '));
   } else {
     const currentNode = graph.find(node => node.name === source);
 

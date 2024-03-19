@@ -19,7 +19,7 @@ function getChildren(_step, _steps) {
         globalThis.paths[_stp.name].paths.push(_step.name);
       } else {
 
-        globalThis.paths[_stp.name] = {         
+        globalThis.paths[_stp.name] = {
           paths: []
         };
 
@@ -36,7 +36,7 @@ function getChildren(_step, _steps) {
         globalThis.visitedSteps.add(_stp.name);
         child.children = getChildren(_stp, _steps);
       } else {
-        child.HTMLclass = 'circular_refrence'
+        child.HTMLclass = 'circular_reference'
       }
       //Store steps with errors
       if (errors?.length && !globalThis.stepsWithErrors?.find(_exist => _exist.text?.name && _exist.text?.name == child.text?.name)) {
@@ -104,6 +104,10 @@ function findErrors(_step) {
     if (missingExpirySeconds && !missingExpiryStep)
       errors.push('Missing Expiry Seconds');
   }
+
+  let invalidRepeat = typeof _step.repeat != "number";
+  if (invalidRepeat)
+    errors.push('Invalid repeat (expected a number)');
 
   return errors;
 }
@@ -217,25 +221,32 @@ function checkStpCase(_stp, _step) {
 
 function prepareKeyValue(_step) {
   let copy = {};
-  for (let key in _step) {
-    if (_step[key]) {
-      switch (key) {
-        case 'expiry':
-          copy[key] = _step[key].step ? `${key} => ${_step[key].step} | (${_step[key].seconds || 'NAN'} Seconds) ` : 'No expiry step set';
-          break;
-        case 'expected':
-          copy[key] = `${key} => ${prepareExpected(_step[key])}`;
-          break;
-        case 'messages':
-          copy[key] = `${key} => ${_step[key]?.length ? prepareMessages(_step[key]) : ''}`
-          break;
-        case 'clarification':
-          copy[key] = `${key} => ${_step[key]?.length ? prepareMessages(_step[key]) : ''}`
-          break;
-        default:
-          copy[key] = `${key} => ${_step[key]}`
-          break;
-      }
+  for (let key in _step) {   
+    switch (key) {
+      case 'expiry':
+        copy[key] = _step[key]?.step ? `${key} => ${_step[key].step} | (${_step[key].seconds || 'NAN'} Seconds) ` : 'No expiry step set';
+        break;
+      case 'expected':
+        copy[key] = `${key} => ${_step[key]?.length ? prepareExpected(_step[key]) : ''}`;
+        break;
+      case 'messages':
+        copy[key] = `${key} => ${_step[key]?.length ? prepareMessages(_step[key]) : ''}`
+        break;
+      case 'clarification':
+        copy[key] = `${key} => ${_step[key]?.length ? prepareMessages(_step[key]) : ''}`
+        break;
+      case 'AllDays':
+        copy[key] = `${key} => ${_step[key] ? prepareAllDays(_step[key]) : ''}`
+        break;
+      case 'selectedDays':
+        copy[key] = `${key} => ${_step[key] ? prepareSelectedDays(_step[key]) : ''}`
+        break;
+      case 'orphanedChildrens':
+        copy[key] = `${key} => ${_step[key] ? prepareOrphans(_step[key]) : ''}`
+        break;
+      default:
+        copy[key] = `${key} => ${_step[key]}`
+        break;
     }
   }
   //Sort name field to the beginning
@@ -253,7 +264,7 @@ function prepareMessages(_messages) {
   ${_message.text}\n
   ${_message.buttons?.length ? " || Buttons [" + _message.buttons.join(' , ') + "]" : ''}\n
   ${_message.options?.length ? " || Options (header => " + _message.header.text + ") [" + _message.options.join(' , ') + "]" : ''}\n
-  ${_message.attachement ? " Attachment => " + _message.attachement : ''}\n
+  ${_message.attachement ? " || Attachment => " + _message.attachement : ''}\n
   ` ).join('<=>');
 }
 
@@ -264,7 +275,7 @@ function checkExpected(_expectedArray, _stepName) {
   return _expectedArray?.find(_expected => _expected?.step == _stepName)
 }
 function deleteUnwanted(_text) {
-  delete _text.aiLabels;
+  // delete _text.aiLabels;
   // delete _text.messages;
   // delete _text.clarification;
   delete _text.status;
@@ -290,7 +301,7 @@ function searchProcedures() {
   if (Instance.endsWith("/")) {
     Instance = Instance.slice(0, -1);
   }
-  
+
   const request = new XMLHttpRequest();
   request.open("GET", `${Instance}/api/procedure/list/1/15/${search}`);
   request.onload = function () {
@@ -310,7 +321,11 @@ function searchProcedures() {
         }
       }
     } else {
-      swal('Error', "Request failed", 'error');
+      showFeedBack({
+        title: "Error",
+        text: "Request failed",
+        icon: "error"
+      });
     }
   };
   request.onerror = function () {
@@ -339,7 +354,7 @@ function getProcedure() {
   loader.style.display = "block";
   let Instance = document.getElementById("urlInput").value;
   const request = new XMLHttpRequest();
-  
+
   if (Instance.endsWith("/")) {
     Instance = Instance.slice(0, -1);
   }
@@ -350,18 +365,25 @@ function getProcedure() {
         let response = JSON.parse(request.responseText);
         globalThis.selectedFlow = response;
         renderGraph();
-        swal({
+        showFeedBack({
           title: "Success!",
           text: "Render Success, " + " " + globalThis.renderTimeText,
-          icon: "success",
-          button: "Ok",
+          icon: "success"
         });
         document.querySelector('.nodeExample1:last-of-type')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
       } else {
-        swal('Error', "Request failed", 'error');
+        showFeedBack({
+          title: "Error",
+          text: "Request failed",
+          icon: "error"
+        });
       }
     } catch (error) {
-      swal('Error', "Render error", 'error');
+      showFeedBack({
+        title: "Error",
+        text: "Render error",
+        icon: "error"
+      });
     } finally {
       // Hide loader 
       loader.style.display = "none";
@@ -480,7 +502,7 @@ function removeDuplicateSteps(steps) {
 }
 function getAllStepsWithErrors(steps) {
   let visited = new Set();
-  let allStepsWithErrors = steps.map((_step, _index) => {
+  let allStepsWithErrorsTemp = steps.map((_step, _index) => {
     if (visited.has(_step.name)) {
       return _step;
     }
@@ -498,7 +520,7 @@ function getAllStepsWithErrors(steps) {
     }
     return _step;
   });
-  return allStepsWithErrors.filter(_step => _step.text?.errors);
+  return allStepsWithErrorsTemp.filter(_step => _step.text?.errors);
 }
 
 function updateSpanValue(id, value) {
@@ -576,6 +598,174 @@ function updateValues() {
   updateSpanValue('allStepsWithErrors', allStepsWithErrorsLength);
   updateSpanValue('stepsWithoutCaller', stepsWithoutCallerLength);
   updateSpanValue('duplicatedSteps', duplicatedStepsLength);
+}
+function takeUserInput(options) {
+  closeModal();
+  closePopup();
+  Swal.close();
+  return new Promise((resolve, reject) => {
+    let userInputOptions = {
+      title: options.title,
+      input: options.input,
+      inputAttributes: options.inputAttributes,
+      showCancelButton: options.showCancelButton || true,
+      confirmButtonText: options.confirmButtonText || "Confirm",
+      allowOutsideClick: options.allowOutsideClick || false,
+      ...options
+    }
+    Swal.fire(userInputOptions).then((result) => resolve(result)).catch(err => reject(err));
+  });
+}
+function showFeedBack(options) {
+  closeModal();
+  closePopup();
+  Swal.close();
+  return new Promise((resolve, reject) => {
+    let _literalOptions;
+    if (typeof options == "string" && arguments.length == 3) {
+      _literalOptions = {
+        title: arguments[0],
+        text: arguments[1],
+        icon: arguments[2]
+      }
+    } else {
+      _literalOptions = options;
+    }
+    Swal.fire(_literalOptions).then((result) => resolve(result)).catch(err => reject(err));
+  });
+}
+function flattenRecursively(arr) {
+  return arr.reduce((acc, val) => {
+    if (Array.isArray(val)) {
+      acc.push(...flattenRecursively(val));
+    } else {
+      acc.push(val);
+    }
+    return acc;
+  }, []);
+}
+function intersectionByName(arr1, arr2) {
+  return arr1.filter(element1 => arr2.some(element2 => element2.name === element1.name));
+}
+function findPureWorkingSteps(inSteps, outSteps, intersection) {
+  // Find the intersection of step names
+  const intersectionNames = intersection.map(step => step.name);
+
+  // Filter inSteps to get pure inSteps (not in the intersection by name)
+  const pureInSteps = inSteps.filter(step => !intersectionNames.includes(step.name));
+
+  // Filter outSteps to get pure outSteps (not in the intersection by name)
+  const pureOutSteps = outSteps.filter(step => !intersectionNames.includes(step.name));
+
+  return { pureInSteps, pureOutSteps };
+}
+function storeValidFields(_step) {
+  let valids = new Set();
+  if (!_step.name) {
+      return null; // Return null or any other suitable value to indicate no match
+  }
+
+  if (["action", "time"].includes(_step.type)) {
+      valids.add("success");
+  }
+
+  if (["action", "time"].includes(_step.type)) {
+      valids.add("fail");
+  }
+
+  if (_step.expiry?.step && !["end"].includes(_step.type)) {
+      valids.add("expiry.step");
+  }
+
+  if (_step.type === "break") {
+      valids.add("next");
+  }
+
+  if (["message", "failover", "reminder"].includes(_step.type)) {
+      valids.add('expected');
+  }
+  return Array.from(valids);
+}
+
+function removeUnValidFields(_step, _validFields, _steps) {
+  // Convert the array into an object for easy and fast access
+  let validCopyObj = {};
+
+  if (_validFields?.length) {
+    _validFields.forEach(_field => {
+      validCopyObj[_field] = true;
+    });
+  }
+
+  if (_step.success && !validCopyObj["success"]) {
+    delete _step.success;
+  } else if (_step.success) {
+    const index = _steps.findIndex(_ => _.name === _step.success);
+    if (index === -1) {
+      delete _step.success;
+    }
+  }
+
+  if (_step.fail && !validCopyObj["fail"]) {
+    delete _step.fail;
+  } else if (_step.fail) {
+    const index = _steps.findIndex(_ => _.name === _step.fail);
+    if (index === -1) {
+      delete _step.fail;
+    }
+  }
+
+  if (_step.expiry?.step && !validCopyObj["expiry.step"]) {
+    delete _step.expiry;
+  } else if (_step.expiry?.step) {
+    const index = _steps.findIndex(_ => _.name === _step.expiry?.step);
+    if (index === -1) {
+      delete _step.expiry;
+    }
+  }
+
+  if (_step.next && !validCopyObj["next"]) {
+    delete _step.next;
+  } else if (_step.next) {
+    const index = _steps.findIndex(_ => _.name === _step.next);
+    if (index === -1) {
+      delete _step.next;
+    }
+  }
+
+  if (_step.expected?.length && !validCopyObj["expected"]) {
+    delete _step.expected;
+  }
+
+  if (_step.expected?.length) {
+    _step.expected = _step.expected.filter(_expected => {
+      const index = _steps.findIndex(_ => _.name === _expected.step);
+      return index !== -1;
+    });
+  }
+
+  if (_step.messages?.length && !["message", "failover", "reminder", "break", "end"].includes(_step.type)) {
+    _step.messages = [];
+  }
+
+  if (_step.clarification?.length && !["message", "failover", "reminder", "break", "end"].includes(_step.type)) {
+    _step.clarification = [];
+  }
+}
+
+function prepareAllDays(_allDays) {
+  return _allDays.map(_ => `number:${_.number}-displayName:${_.displayName}-checked:${_.checked}`)
+}
+function prepareSelectedDays(_selectedDays) {
+  let tempArray = [];
+  for (const key in _selectedDays) {
+    tempArray.push(`${key}: ${_selectedDays[key]}`);
+  }
+  return tempArray.join(", ");
+}
+
+function prepareOrphans(_orphans) { 
+  return _orphans.map((_orphan,_index)=>`( ${_index+1} - ${_orphan} )`).join(",\n");
 }
 
 
